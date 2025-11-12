@@ -17,15 +17,8 @@ public class App {
         this.orderManagement = new OrderManagement(this.scanner, this.menuManagement);
     }
 
-    private void prepareMenu() {
-        this.menuManagement.add("Ayam Bakar", 15_000, MenuCategory.MAKANAN);
-        this.menuManagement.add("Es Teh", 5_000, MenuCategory.MINUMAN);
-        this.menuManagement.add("Es Jeruk", 7_500, MenuCategory.MINUMAN);
-        this.menuManagement.add("Nasi Gudeg", 12_500, MenuCategory.MAKANAN);
-    }
-
     public void run() {
-        this.prepareMenu();
+        this.menuManagement.prepareMenu();
         boolean running = true;
 
         while (running) {
@@ -38,13 +31,16 @@ public class App {
             int choice = getIntInput();
 
             switch (choice) {
-                case 1 -> this.menuManagement.showMenuManagement(scanner);
-                case 2 -> this.orderManagement.showOrderManagement();
+                case 1 ->
+                    this.menuManagement.showMenuManagement(scanner);
+                case 2 ->
+                    this.orderManagement.showOrderManagement();
                 case 0 -> {
                     running = false;
                     System.out.println("Terima kasih! Aplikasi ditutup.");
                 }
-                default -> System.out.println("Pilihan tidak valid, coba lagi.");
+                default ->
+                    System.out.println("Pilihan tidak valid, coba lagi.");
             }
         }
     }

@@ -18,6 +18,13 @@ public class MenuManagement {
         this.beverageMenus = new StringBuilder();
     }
 
+    public void prepareMenu() {
+        this.add("Ayam Bakar", 15_000, MenuCategory.MAKANAN);
+        this.add("Es Teh", 5_000, MenuCategory.MINUMAN);
+        this.add("Es Jeruk", 7_500, MenuCategory.MINUMAN);
+        this.add("Nasi Gudeg", 12_500, MenuCategory.MAKANAN);
+    }
+
     public void showMenuManagement(Scanner scanner) {
         boolean back = false;
         while (!back) {
