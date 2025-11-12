@@ -2,8 +2,12 @@ package strukturdata;
 
 public class CountingSortDesc {
 
+    public void start() {
+        this.main();
+    }
+
     // Method untuk melakukan counting sort descending
-    public static void countingSort(int[] arr) {
+    public void countingSort(int[] arr) {
         int n = arr.length;
 
         // Temukan nilai maksimum dan minimum
@@ -45,14 +49,14 @@ public class CountingSortDesc {
     }
 
     // Method untuk print array
-    public static void printArray(int[] arr) {
+    public void printArray(int[] arr) {
         for (int i = 0; i < arr.length; i++) {
             System.out.print(arr[i] + " ");
         }
         System.out.println();
     }
 
-    public static void main(String[] args) {
+    public void main() {
         // Inisialisasi data (10 elemen)
         // Menggunakan bilangan positif untuk Counting Sort
         int[] data = {45, 23, 78, 12, 67, 34, 89, 56, 91, 28};

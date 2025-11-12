@@ -4,8 +4,7 @@ import java.util.LinkedList;
 
 public class StrukturData {
 
-    public void start() {
-
+    public void tugas1() {
         System.out.println("stuktur baris tipe data integer");
         int StrukturBaris;
         StrukturBaris = 20;
@@ -51,5 +50,13 @@ public class StrukturData {
         linkedList.add(72);
 
         linkedList.forEach(i -> System.out.println(i));
+    }
+
+    public void tugas2() {
+        MergeSortDesc mergeSort = new MergeSortDesc();
+        mergeSort.start();
+
+        CountingSortDesc countingSort = new CountingSortDesc();
+        countingSort.start();
     }
 }

@@ -1,10 +1,12 @@
 
-import orderapp.App;
+import strukturdata.StrukturData;
+
 
 public class Main {
 
     public static void main(String[] args) {
-        App app = new App();
-        app.run();
+        StrukturData app = new StrukturData();
+        app.tugas2();
     }
+
 }

@@ -2,8 +2,12 @@ package strukturdata;
 
 public class MergeSortDesc {
 
+    public void start() {
+        this.main();
+    }
+
     // Method untuk melakukan merge sort
-    public static void mergeSort(int[] arr, int left, int right) {
+    public void mergeSort(int[] arr, int left, int right) {
         if (left < right) {
             int mid = left + (right - left) / 2;
 
@@ -18,7 +22,7 @@ public class MergeSortDesc {
     }
 
     // Method untuk menggabungkan dua subarray secara descending
-    public static void merge(int[] arr, int left, int mid, int right) {
+    public void merge(int[] arr, int left, int mid, int right) {
         // Ukuran subarray
         int n1 = mid - left + 1;
         int n2 = right - mid;
@@ -67,14 +71,14 @@ public class MergeSortDesc {
     }
 
     // Method untuk print array
-    public static void printArray(int[] arr) {
+    public void printArray(int[] arr) {
         for (int i = 0; i < arr.length; i++) {
             System.out.print(arr[i] + " ");
         }
         System.out.println();
     }
 
-    public static void main(String[] args) {
+    public void main() {
         // Inisialisasi data (10 elemen)
         int[] data = {45, 23, 78, 12, 67, 34, 89, 56, 91, 28};
 
@@ -141,4 +145,4 @@ ANALISA KINERJA MERGE SORT:
    Untuk 10 elemen: ~50,000-100,000 nanoseconds
    Untuk 1000 elemen: ~1-2 milliseconds
    Untuk 1,000,000 elemen: ~200-300 milliseconds
-*/
+ */
