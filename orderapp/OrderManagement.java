@@ -28,7 +28,7 @@ public class OrderManagement {
 
             switch (choice) {
                 case 1 ->
-                    this.startNewOrder();
+                    this.runNewOrder();
                 case 2 ->
                     this.printAllOrders();
                 case 0 ->
@@ -39,7 +39,7 @@ public class OrderManagement {
         }
     }
 
-    private void startNewOrder() {
+    private void runNewOrder() {
         System.out.println("=============================================");
         System.out.println("                MULAI ORDER BARU             ");
         System.out.println("=============================================");
@@ -47,7 +47,7 @@ public class OrderManagement {
         this.menuManagement.printMenu();
 
         Order order = new Order(this.scanner, this.menuManagement.getMenus());
-        order.start();
+        order.run();
 
         this.orders.add(order);
         System.out.println("Order berhasil dibuat!");

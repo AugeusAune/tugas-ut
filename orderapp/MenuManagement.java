@@ -61,30 +61,12 @@ public class MenuManagement {
 
     public void addMenuViaInput(Scanner scanner) {
         System.out.print("Masukkan nama menu: ");
-        String name = scanner.nextLine();
+        String name = this.getStringInput(scanner);
 
         System.out.print("Masukkan harga menu: ");
         double price = this.getDoubleInput(scanner);
 
-        System.out.println("Pilih kategori: ");
-        System.out.println("1. Makanan");
-        System.out.println("2. Minuman");
-        System.out.print("Pilih: ");
-        int categoryChoice = this.getIntInput(scanner);
-
-        MenuCategory category = switch (categoryChoice) {
-            case 1 ->
-                MenuCategory.MAKANAN;
-            case 2 ->
-                MenuCategory.MINUMAN;
-            default ->
-                null;
-        };
-
-        if (category == null) {
-            System.out.println("Kategori tidak valid!");
-            return;
-        }
+        MenuCategory category = this.getCategoryInput(scanner);
 
         this.add(name, price, category);
         System.out.println("Menu \"" + name + "\" berhasil ditambahkan!");
@@ -92,40 +74,22 @@ public class MenuManagement {
 
     public void editMenuViaInput(Scanner scanner) {
         System.out.print("Masukkan nama menu yang ingin diubah: ");
-        String name = scanner.nextLine();
+        String name = this.getStringInput(scanner);
 
         System.out.print("Masukkan nama baru: ");
-        String newName = scanner.nextLine();
+        String newName = this.getStringInput(scanner);
 
         System.out.print("Masukkan harga baru: ");
         double newPrice = this.getDoubleInput(scanner);
 
-        System.out.println("Pilih kategori baru:");
-        System.out.println("1. Makanan");
-        System.out.println("2. Minuman");
-        System.out.print("Pilih: ");
-        int categoryChoice = this.getIntInput(scanner);
-
-        MenuCategory newCategory = switch (categoryChoice) {
-            case 1 ->
-                MenuCategory.MAKANAN;
-            case 2 ->
-                MenuCategory.MINUMAN;
-            default ->
-                null;
-        };
-
-        if (newCategory == null) {
-            System.out.println("Kategori tidak valid!");
-            return;
-        }
+        MenuCategory newCategory = this.getCategoryInput(scanner);
 
         this.edit(name, newName, newPrice, newCategory);
     }
 
     public void deleteMenuViaInput(Scanner scanner) {
         System.out.print("Masukkan nama menu yang ingin dihapus: ");
-        String name = scanner.nextLine();
+        String name = this.getStringInput(scanner);
         this.delete(name);
     }
 
@@ -199,21 +163,58 @@ public class MenuManagement {
         this.foodMenus.setLength(0);
     }
 
+    private MenuCategory getCategoryInput(Scanner scanner) {
+        while (true) {
+            System.out.println("Pilih kategori:");
+            System.out.println("1. Makanan");
+            System.out.println("2. Minuman");
+            System.out.print("Pilih: ");
+
+            int choice = getIntInput(scanner);
+
+            MenuCategory category = switch (choice) {
+                case 1 ->
+                    MenuCategory.MAKANAN;
+                case 2 ->
+                    MenuCategory.MINUMAN;
+                default ->
+                    null;
+            };
+
+            if (category != null) {
+                return category;
+            }
+
+            System.out.println("Kategori tidak valid! Coba lagi.\n");
+        }
+    }
+
+    private String getStringInput(Scanner scanner) {
+        String input = scanner.nextLine().trim();
+        while (input.isEmpty()) {
+            System.out.println("Input tidak boleh kosong! Coba lagi: ");
+            input = scanner.nextLine().trim();
+        }
+        return input;
+    }
+
     private int getIntInput(Scanner scanner) {
-        try {
-            return Integer.parseInt(scanner.nextLine());
-        } catch (NumberFormatException e) {
-            System.out.println("Input harus berupa angka!");
-            return -1;
+        while (true) {
+            try {
+                return Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Input harus berupa angka! Coba lagi: ");
+            }
         }
     }
 
     private double getDoubleInput(Scanner scanner) {
-        try {
-            return Double.parseDouble(scanner.nextLine());
-        } catch (NumberFormatException e) {
-            System.out.println("Input harga tidak valid!");
-            return 0;
+        while (true) {
+            try {
+                return Double.parseDouble(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Input harga tidak valid! Coba lagi: ");
+            }
         }
     }
 }

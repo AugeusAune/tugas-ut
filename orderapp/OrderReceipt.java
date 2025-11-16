@@ -75,7 +75,7 @@ public class OrderReceipt {
         System.out.printf("PPN (%d%%): %32s%n", (int) (VAT_RATE * 100), formatter.format(calculatedVat));
 
         if (discountAmount > 0) {
-            System.out.printf("Diskon (10%%): %30s%n", "-" + formatter.format(discountAmount));
+            System.out.printf("Diskon (10%%): %29s%n", "-" + formatter.format(discountAmount));
         }
 
         System.out.printf("Biaya Layanan: %27s%n", formatter.format(SERVICE_FEE));

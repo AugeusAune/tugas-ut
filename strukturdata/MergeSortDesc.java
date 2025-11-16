@@ -2,36 +2,28 @@ package strukturdata;
 
 public class MergeSortDesc {
 
-    public void start() {
+    public void run() {
         this.main();
     }
 
-    // Method untuk melakukan merge sort
     public void mergeSort(int[] arr, int left, int right) {
         if (left < right) {
             int mid = left + (right - left) / 2;
 
-            // Sort bagian kiri
             mergeSort(arr, left, mid);
-            // Sort bagian kanan
             mergeSort(arr, mid + 1, right);
 
-            // Gabungkan kedua bagian
             merge(arr, left, mid, right);
         }
     }
 
-    // Method untuk menggabungkan dua subarray secara descending
     public void merge(int[] arr, int left, int mid, int right) {
-        // Ukuran subarray
         int n1 = mid - left + 1;
         int n2 = right - mid;
 
-        // Array temporary
         int[] L = new int[n1];
         int[] R = new int[n2];
 
-        // Copy data ke array temporary
         for (int i = 0; i < n1; i++) {
             L[i] = arr[left + i];
         }
@@ -39,11 +31,9 @@ public class MergeSortDesc {
             R[j] = arr[mid + 1 + j];
         }
 
-        // Merge array temporary kembali ke arr[]
         int i = 0, j = 0;
         int k = left;
 
-        // Bandingkan dan gabungkan secara descending (terbesar ke terkecil)
         while (i < n1 && j < n2) {
             if (L[i] >= R[j]) {
                 arr[k] = L[i];
@@ -55,14 +45,12 @@ public class MergeSortDesc {
             k++;
         }
 
-        // Copy sisa elemen L[] jika ada
         while (i < n1) {
             arr[k] = L[i];
             i++;
             k++;
         }
 
-        // Copy sisa elemen R[] jika ada
         while (j < n2) {
             arr[k] = R[j];
             j++;
@@ -70,7 +58,6 @@ public class MergeSortDesc {
         }
     }
 
-    // Method untuk print array
     public void printArray(int[] arr) {
         for (int i = 0; i < arr.length; i++) {
             System.out.print(arr[i] + " ");
@@ -79,22 +66,18 @@ public class MergeSortDesc {
     }
 
     public void main() {
-        // Inisialisasi data (10 elemen)
         int[] data = {45, 23, 78, 12, 67, 34, 89, 56, 91, 28};
 
         System.out.println("=== MERGE SORT (DESCENDING) ===");
         System.out.println("\nData sebelum sorting:");
         printArray(data);
 
-        // Catat waktu mulai
-        long startTime = System.nanoTime();
+        long runTime = System.nanoTime();
 
-        // Lakukan sorting
         mergeSort(data, 0, data.length - 1);
 
-        // Catat waktu selesai
         long endTime = System.nanoTime();
-        long duration = endTime - startTime;
+        long duration = endTime - runTime;
 
         System.out.println("\nData setelah sorting (terbesar ke terkecil):");
         printArray(data);

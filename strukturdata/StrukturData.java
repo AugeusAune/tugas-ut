@@ -54,9 +54,9 @@ public class StrukturData {
 
     public void tugas2() {
         MergeSortDesc mergeSort = new MergeSortDesc();
-        mergeSort.start();
+        mergeSort.run();
 
         CountingSortDesc countingSort = new CountingSortDesc();
-        countingSort.start();
+        countingSort.run();
     }
 }

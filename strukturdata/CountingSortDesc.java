@@ -2,15 +2,13 @@ package strukturdata;
 
 public class CountingSortDesc {
 
-    public void start() {
+    public void run() {
         this.main();
     }
 
-    // Method untuk melakukan counting sort descending
     public void countingSort(int[] arr) {
         int n = arr.length;
 
-        // Temukan nilai maksimum dan minimum
         int max = arr[0];
         int min = arr[0];
         for (int i = 1; i < n; i++) {
@@ -22,17 +20,14 @@ public class CountingSortDesc {
             }
         }
 
-        // Buat array count dengan range dari min ke max
         int range = max - min + 1;
         int[] count = new int[range];
         int[] output = new int[n];
 
-        // Hitung frekuensi setiap elemen
         for (int i = 0; i < n; i++) {
             count[arr[i] - min]++;
         }
 
-        // Output hasil secara descending (dari terbesar ke terkecil)
         int index = 0;
         for (int i = range - 1; i >= 0; i--) {
             while (count[i] > 0) {
@@ -42,13 +37,11 @@ public class CountingSortDesc {
             }
         }
 
-        // Copy output array ke arr
         for (int i = 0; i < n; i++) {
             arr[i] = output[i];
         }
     }
 
-    // Method untuk print array
     public void printArray(int[] arr) {
         for (int i = 0; i < arr.length; i++) {
             System.out.print(arr[i] + " ");
@@ -57,23 +50,18 @@ public class CountingSortDesc {
     }
 
     public void main() {
-        // Inisialisasi data (10 elemen)
-        // Menggunakan bilangan positif untuk Counting Sort
         int[] data = {45, 23, 78, 12, 67, 34, 89, 56, 91, 28};
 
         System.out.println("=== COUNTING SORT (DESCENDING) ===");
         System.out.println("\nData sebelum sorting:");
         printArray(data);
 
-        // Catat waktu mulai
-        long startTime = System.nanoTime();
+        long runTime = System.nanoTime();
 
-        // Lakukan sorting
         countingSort(data);
 
-        // Catat waktu selesai
         long endTime = System.nanoTime();
-        long duration = endTime - startTime;
+        long duration = endTime - runTime;
 
         System.out.println("\nData setelah sorting (terbesar ke terkecil):");
         printArray(data);
@@ -81,7 +69,6 @@ public class CountingSortDesc {
         System.out.println("\nWaktu eksekusi: " + duration + " nanoseconds");
         System.out.println("Waktu eksekusi: " + (duration / 1000000.0) + " milliseconds");
 
-        // Demonstrasi dengan data yang memiliki range lebih kecil
         System.out.println("\n=== DEMO: Data dengan Range Kecil ===");
         int[] data2 = {5, 2, 9, 1, 5, 6, 3, 8, 4, 7};
         System.out.println("Data sebelum sorting:");

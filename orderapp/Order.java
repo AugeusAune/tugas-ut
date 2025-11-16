@@ -34,7 +34,7 @@ public class Order {
         return this.scanner;
     }
 
-    public void start() {
+    public void run() {
         this.askOrder();
 
         this.askCustomerName();
