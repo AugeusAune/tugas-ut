@@ -1,6 +1,6 @@
 
 import orderapp.App;
-import strukturdata.StrukturData;
+// import strukturdata.StrukturData;
 
 public class Main {
 

@@ -20,9 +20,13 @@ public class MenuManagement {
 
     public void prepareMenu() {
         this.add("Ayam Bakar", 15_000, MenuCategory.MAKANAN);
+        this.add("Ayam Penyet", 20_000, MenuCategory.MAKANAN);
+        this.add("Nasi Gudeg", 12_500, MenuCategory.MAKANAN);
+        this.add("Nasi Ayam", 13_500, MenuCategory.MAKANAN);
         this.add("Es Teh", 5_000, MenuCategory.MINUMAN);
         this.add("Es Jeruk", 7_500, MenuCategory.MINUMAN);
-        this.add("Nasi Gudeg", 12_500, MenuCategory.MAKANAN);
+        this.add("Pop Ice", 4_500, MenuCategory.MINUMAN);
+        this.add("Air Putih", 3_500, MenuCategory.MINUMAN);
     }
 
     public void showMenuManagement(Scanner scanner) {
@@ -73,24 +77,104 @@ public class MenuManagement {
     }
 
     public void editMenuViaInput(Scanner scanner) {
-        System.out.print("Masukkan nama menu yang ingin diubah: ");
-        String name = this.getStringInput(scanner);
+        if (menus.isEmpty()) {
+            System.out.println("Tidak ada menu tersedia.");
+            return;
+        }
+
+        System.out.println("\n=== DAFTAR MENU ===");
+        for (int i = 0; i < menus.size(); i++) {
+            Menu menu = menus.get(i);
+            System.out.printf("%d. %s - Rp. %s (%s)\n",
+                    i + 1,
+                    menu.getName(),
+                    formatter.format(menu.getPrice()),
+                    menu.getCategory());
+        }
+
+        System.out.print("\nMasukkan nomor menu yang ingin diubah: ");
+        int menuNumber = getMenuNumberInput(scanner, menus.size());
+
+        if (menuNumber == -1) {
+            return;
+        }
+
+        Menu selectedMenu = menus.get(menuNumber - 1);
 
         System.out.print("Masukkan nama baru: ");
-        String newName = this.getStringInput(scanner);
+        String newName = getStringInput(scanner);
 
         System.out.print("Masukkan harga baru: ");
-        double newPrice = this.getDoubleInput(scanner);
+        double newPrice = getDoubleInput(scanner);
 
-        MenuCategory newCategory = this.getCategoryInput(scanner);
+        MenuCategory newCategory = getCategoryInput(scanner);
 
-        this.edit(name, newName, newPrice, newCategory);
+        System.out.println("\n=== KONFIRMASI PERUBAHAN ===");
+        System.out.printf("Dari: %s - Rp. %s (%s)\n",
+                selectedMenu.getName(),
+                formatter.format(selectedMenu.getPrice()),
+                selectedMenu.getCategory());
+        System.out.printf("Menjadi: %s - Rp. %s (%s)\n",
+                newName,
+                formatter.format(newPrice),
+                newCategory);
+        System.out.print("\nApakah Anda yakin? (Ya/Tidak): ");
+
+        String confirmation = getConfirmationInput(scanner);
+
+        if (confirmation.equalsIgnoreCase("Ya")) {
+            selectedMenu.setName(newName);
+            selectedMenu.setPrice(newPrice);
+            selectedMenu.setCategory(newCategory);
+            clearStringMenus();
+            System.out.println("\nMenu berhasil diperbarui!");
+        } else {
+            System.out.println("\nPerubahan dibatalkan.");
+        }
     }
 
     public void deleteMenuViaInput(Scanner scanner) {
-        System.out.print("Masukkan nama menu yang ingin dihapus: ");
-        String name = this.getStringInput(scanner);
-        this.delete(name);
+        if (menus.isEmpty()) {
+            System.out.println("Tidak ada menu tersedia.");
+            return;
+        }
+
+        System.out.println("\n=== DAFTAR MENU ===");
+        for (int i = 0; i < menus.size(); i++) {
+            Menu menu = menus.get(i);
+            System.out.printf("%d. %s - Rp. %s (%s)\n",
+                    i + 1,
+                    menu.getName(),
+                    formatter.format(menu.getPrice()),
+                    menu.getCategory());
+        }
+
+        System.out.print("\nMasukkan nomor menu yang ingin dihapus: ");
+        int menuNumber = getMenuNumberInput(scanner, menus.size());
+
+        if (menuNumber == -1) {
+            return;
+        }
+
+        Menu selectedMenu = menus.get(menuNumber - 1);
+
+        System.out.println("\n=== KONFIRMASI PENGHAPUSAN ===");
+        System.out.printf("Menu yang akan dihapus: %s - Rp. %s (%s)\n",
+                selectedMenu.getName(),
+                formatter.format(selectedMenu.getPrice()),
+                selectedMenu.getCategory());
+        System.out.print("\nApakah Anda yakin? (Ya/Tidak): ");
+
+        String confirmation = getConfirmationInput(scanner);
+
+        if (confirmation.equalsIgnoreCase("Ya")) {
+            String menuName = selectedMenu.getName();
+            menus.remove(menuNumber - 1);
+            clearStringMenus();
+            System.out.println("\nMenu \"" + menuName + "\" berhasil dihapus!");
+        } else {
+            System.out.println("\nPenghapusan dibatalkan.");
+        }
     }
 
     public void printMenu() {
@@ -113,32 +197,6 @@ public class MenuManagement {
     private void add(String name, double price, MenuCategory category) {
         this.menus.add(new Menu(name, price, category));
         this.clearStringMenus();
-    }
-
-    private void delete(String name) {
-        boolean removed = this.menus.removeIf(menu -> menu.getName().equalsIgnoreCase(name));
-        this.clearStringMenus();
-
-        if (removed) {
-            System.out.println("Menu \"" + name + "\" berhasil dihapus!");
-            return;
-        }
-
-        System.out.println("Menu \"" + name + "\" tidak ditemukan.");
-    }
-
-    private void edit(String name, String newName, double newPrice, MenuCategory newCategory) {
-        for (Menu menu : this.menus) {
-            if (menu.getName().equalsIgnoreCase(name)) {
-                menu.setName(newName);
-                menu.setPrice(newPrice);
-                menu.setCategory(newCategory);
-                this.clearStringMenus();
-                System.out.println("Menu \"" + name + "\" berhasil diperbarui!");
-                return;
-            }
-        }
-        System.out.println("Menu \"" + name + "\" tidak ditemukan.");
     }
 
     private void buildStringMenus() {
@@ -192,7 +250,7 @@ public class MenuManagement {
     private String getStringInput(Scanner scanner) {
         String input = scanner.nextLine().trim();
         while (input.isEmpty()) {
-            System.out.println("Input tidak boleh kosong! Coba lagi: ");
+            System.out.print("Input tidak boleh kosong! Coba lagi: ");
             input = scanner.nextLine().trim();
         }
         return input;
@@ -203,7 +261,7 @@ public class MenuManagement {
             try {
                 return Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
-                System.out.println("Input harus berupa angka! Coba lagi: ");
+                System.out.print("Input harus berupa angka! Coba lagi: ");
             }
         }
     }
@@ -213,8 +271,32 @@ public class MenuManagement {
             try {
                 return Double.parseDouble(scanner.nextLine());
             } catch (NumberFormatException e) {
-                System.out.println("Input harga tidak valid! Coba lagi: ");
+                System.out.print("Input harga tidak valid! Coba lagi: ");
             }
+        }
+    }
+
+    private int getMenuNumberInput(Scanner scanner, int maxNumber) {
+        while (true) {
+            int number = getIntInput(scanner);
+
+            if (number >= 1 && number <= maxNumber) {
+                return number;
+            }
+
+            System.out.print("Nomor menu tidak valid! Coba lagi (1-" + maxNumber + "): ");
+        }
+    }
+
+    private String getConfirmationInput(Scanner scanner) {
+        while (true) {
+            String input = scanner.nextLine().trim();
+
+            if (input.equalsIgnoreCase("Ya") || input.equalsIgnoreCase("Tidak")) {
+                return input;
+            }
+
+            System.out.print("Input tidak valid! Masukkan 'Ya' atau 'Tidak': ");
         }
     }
 }

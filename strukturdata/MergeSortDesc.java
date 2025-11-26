@@ -9,8 +9,12 @@ public class MergeSortDesc {
     public void mergeSort(int[] arr, int left, int right) {
         if (left < right) {
             int mid = left + (right - left) / 2;
+            System.out.printf("left: %d, right: %d, mid: %d\n", left, right, mid);
 
+            // Get index 0 => mid
             mergeSort(arr, left, mid);
+
+            // get index mid => last
             mergeSort(arr, mid + 1, right);
 
             merge(arr, left, mid, right);
@@ -18,6 +22,8 @@ public class MergeSortDesc {
     }
 
     public void merge(int[] arr, int left, int mid, int right) {
+        System.out.printf("merging left: %d, right: %d, mid: %d\n", left, right, mid);
+
         int n1 = mid - left + 1;
         int n2 = right - mid;
 
