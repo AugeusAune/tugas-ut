@@ -58,5 +58,12 @@ public class StrukturData {
 
         CountingSortDesc countingSort = new CountingSortDesc();
         countingSort.run();
+
+        // - Merge Sort (O(n log n)) cocok untuk data besar atau nilai yang sangat bervariasi."
+        // - Counting Sort (O(n + k)) sangat cepat, tetapi hanya efektif jika rentang nilai kecil."
+        // - Merge Sort lebih fleksibel untuk berbagai jenis data dan ukuran besar."
+        // - Counting Sort memerlukan memori tambahan jika rentang nilai besar."
+        // - Kesimpulan: pilih Counting Sort jika nilai kecil & terbatas, pilih Merge Sort untuk data umum."
     }
+
 }
