@@ -1,12 +1,18 @@
-package orderapp;
+package orderapp.menu;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class MenuManagement {
 
-    private final ArrayList<Menu> menus;
+    private final ArrayList<MenuItem> menus;
     private final StringBuilder foodMenus;
     private final StringBuilder beverageMenus;
     private final NumberFormat formatter;
@@ -19,14 +25,14 @@ public class MenuManagement {
     }
 
     public void prepareMenu() {
-        this.add("Ayam Bakar", 15_000, MenuCategory.MAKANAN);
-        this.add("Ayam Penyet", 20_000, MenuCategory.MAKANAN);
-        this.add("Nasi Gudeg", 12_500, MenuCategory.MAKANAN);
-        this.add("Nasi Ayam", 13_500, MenuCategory.MAKANAN);
-        this.add("Es Teh", 5_000, MenuCategory.MINUMAN);
-        this.add("Es Jeruk", 7_500, MenuCategory.MINUMAN);
-        this.add("Pop Ice", 4_500, MenuCategory.MINUMAN);
-        this.add("Air Putih", 3_500, MenuCategory.MINUMAN);
+        this.add("Ayam Bakar", 15_000, "bakaran", MenuCategory.MAKANAN);
+        this.add("Ayam Penyet", 20_000, "default", MenuCategory.MAKANAN);
+        this.add("Nasi Gudeg", 12_500, "default", MenuCategory.MAKANAN);
+        this.add("Nasi Ayam", 13_500, "default", MenuCategory.MAKANAN);
+        this.add("Es Teh", 5_000, "default", MenuCategory.MINUMAN);
+        this.add("Es Jeruk", 7_500, "default", MenuCategory.MINUMAN);
+        this.add("Pop Ice", 4_500, "default", MenuCategory.MINUMAN);
+        this.add("Air Putih", 3_500, "default", MenuCategory.MINUMAN);
     }
 
     public void showMenuManagement(Scanner scanner) {
@@ -59,7 +65,7 @@ public class MenuManagement {
         }
     }
 
-    public ArrayList<Menu> getMenus() {
+    public ArrayList<MenuItem> getMenus() {
         return this.menus;
     }
 
@@ -72,8 +78,11 @@ public class MenuManagement {
 
         MenuCategory category = this.getCategoryInput(scanner);
 
-        this.add(name, price, category);
-        System.out.println("Menu \"" + name + "\" berhasil ditambahkan!");
+        System.out.printf("Masukkan jenis %s: ", MenuCategory.MAKANAN == category ? "Makanan" : "Minuman");
+        String type = this.getStringInput(scanner);
+
+        this.add(name, price, type, category);
+        System.out.println("MenuItem \"" + name + "\" berhasil ditambahkan!");
     }
 
     public void editMenuViaInput(Scanner scanner) {
@@ -84,7 +93,7 @@ public class MenuManagement {
 
         System.out.println("\n=== DAFTAR MENU ===");
         for (int i = 0; i < menus.size(); i++) {
-            Menu menu = menus.get(i);
+            MenuItem menu = menus.get(i);
             System.out.printf("%d. %s - Rp. %s (%s)\n",
                     i + 1,
                     menu.getName(),
@@ -99,7 +108,7 @@ public class MenuManagement {
             return;
         }
 
-        Menu selectedMenu = menus.get(menuNumber - 1);
+        MenuItem selectedMenu = menus.get(menuNumber - 1);
 
         System.out.print("Masukkan nama baru: ");
         String newName = getStringInput(scanner);
@@ -107,17 +116,14 @@ public class MenuManagement {
         System.out.print("Masukkan harga baru: ");
         double newPrice = getDoubleInput(scanner);
 
+        String type = this.getStringInput(scanner);
+
         MenuCategory newCategory = getCategoryInput(scanner);
 
         System.out.println("\n=== KONFIRMASI PERUBAHAN ===");
-        System.out.printf("Dari: %s - Rp. %s (%s)\n",
-                selectedMenu.getName(),
-                formatter.format(selectedMenu.getPrice()),
-                selectedMenu.getCategory());
-        System.out.printf("Menjadi: %s - Rp. %s (%s)\n",
-                newName,
-                formatter.format(newPrice),
-                newCategory);
+        System.out.printf("Dari: %s - Rp. %s (%s)\n", selectedMenu.getName(), formatter.format(selectedMenu.getPrice()), selectedMenu.getCategory());
+        System.out.printf("Menjadi: %s - Rp. %s (%s)\n", newName, formatter.format(newPrice), newCategory);
+
         System.out.print("\nApakah Anda yakin? (Ya/Tidak): ");
 
         String confirmation = getConfirmationInput(scanner);
@@ -125,7 +131,7 @@ public class MenuManagement {
         if (confirmation.equalsIgnoreCase("Ya")) {
             selectedMenu.setName(newName);
             selectedMenu.setPrice(newPrice);
-            selectedMenu.setCategory(newCategory);
+            selectedMenu.setType(type);
             clearStringMenus();
             System.out.println("\nMenu berhasil diperbarui!");
         } else {
@@ -141,7 +147,7 @@ public class MenuManagement {
 
         System.out.println("\n=== DAFTAR MENU ===");
         for (int i = 0; i < menus.size(); i++) {
-            Menu menu = menus.get(i);
+            MenuItem menu = menus.get(i);
             System.out.printf("%d. %s - Rp. %s (%s)\n",
                     i + 1,
                     menu.getName(),
@@ -156,13 +162,10 @@ public class MenuManagement {
             return;
         }
 
-        Menu selectedMenu = menus.get(menuNumber - 1);
+        MenuItem selectedMenu = menus.get(menuNumber - 1);
 
         System.out.println("\n=== KONFIRMASI PENGHAPUSAN ===");
-        System.out.printf("Menu yang akan dihapus: %s - Rp. %s (%s)\n",
-                selectedMenu.getName(),
-                formatter.format(selectedMenu.getPrice()),
-                selectedMenu.getCategory());
+        System.out.printf("MenuItem yang akan dihapus: %s - Rp. %s (%s)\n", selectedMenu.getName(), formatter.format(selectedMenu.getPrice()), selectedMenu.getCategory());
         System.out.print("\nApakah Anda yakin? (Ya/Tidak): ");
 
         String confirmation = getConfirmationInput(scanner);
@@ -194,23 +197,93 @@ public class MenuManagement {
         System.out.print(this.beverageMenus.toString());
     }
 
-    private void add(String name, double price, MenuCategory category) {
-        this.menus.add(new Menu(name, price, category));
+    public void saveToFile(String filename) throws IOException {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename))) {
+            for (MenuItem it : this.menus) {
+                String line = "";
+
+                if (it instanceof Makanan m) {
+                    line = String.format("M;%s;%.2f;%s;%s", m.getName(), m.getPrice(), m.getCategory(), m.getType());
+                }
+
+                if (it instanceof Minuman n) {
+                    line = String.format("N;%s;%.2f;%s;%s", n.getName(), n.getPrice(), n.getCategory(), n.getType());
+                }
+
+                if (it instanceof Diskon d) {
+                    line = String.format("D;%s;%.2f;%s;%.2f", d.getName(), d.getPrice(), d.getCategory(), d.getDiskonPercent());
+                }
+
+                bw.write(line);
+                bw.newLine();
+            }
+        }
+    }
+
+    public void loadFromFile(String filename) throws IOException {
+        this.menus.clear();
+
+        File f = new File(filename);
+        if (!f.exists()) {
+            return;
+        }
+        try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.trim().isEmpty()) {
+                    continue;
+                }
+                String[] parts = line.split(";");
+                if (parts.length < 5) {
+                    continue;
+                }
+
+                String tipe = parts[0];
+                String nama = parts[1];
+                double harga = Double.parseDouble(parts[2]);
+                String type = parts[3];
+                String extra = parts[4];
+
+                switch (tipe) {
+                    case "M" ->
+                        this.menus.add(new Makanan(nama, harga, type));
+                    case "N" ->
+                        this.menus.add(new Minuman(nama, harga, type));
+                    case "D" -> {
+                        double pct = Double.parseDouble(extra);
+                        this.menus.add(new Diskon(nama, harga, type, pct));
+                    }
+                    default -> {
+                    }
+                }
+            }
+        }
+    }
+
+    private void add(String name, double price, String type, MenuCategory category) {
+        if (category == MenuCategory.MAKANAN) {
+            this.menus.add(new Makanan(name, price, type));
+        }
+
+        if (category == MenuCategory.MINUMAN) {
+            this.menus.add(new Minuman(name, price, type));
+        }
+
         this.clearStringMenus();
     }
 
     private void buildStringMenus() {
-        for (Menu menu : this.menus) {
+        for (MenuItem menu : this.menus) {
             String displayMenu = String.format("%-28s Rp. %s\n",
                     menu.getName(),
                     this.formatter.format(menu.getPrice()));
 
-            if (menu.getCategory() == MenuCategory.MAKANAN) {
+            if ("Makanan".equals(menu.getCategory())) {
                 this.foodMenus.append(displayMenu);
                 continue;
             }
 
-            if (menu.getCategory() == MenuCategory.MINUMAN) {
+            if ("Minuman".equals(menu.getCategory())) {
                 this.beverageMenus.append(displayMenu);
             }
         }

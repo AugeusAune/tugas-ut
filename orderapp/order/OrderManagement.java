@@ -1,7 +1,8 @@
-package orderapp;
+package orderapp.order;
 
 import java.util.ArrayList;
 import java.util.Scanner;
+import orderapp.menu.MenuManagement;
 
 public class OrderManagement {
 

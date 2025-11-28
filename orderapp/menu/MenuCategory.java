@@ -1,4 +1,4 @@
-package orderapp;
+package orderapp.menu;
 
 public enum MenuCategory {
     MAKANAN,

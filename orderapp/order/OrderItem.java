@@ -1,17 +1,20 @@
-package orderapp;
+package orderapp.order;
+
+import orderapp.menu.MenuItem;
+
 
 public class OrderItem {
 
-    private final Menu menu;
+    private final MenuItem menu;
 
     private final Integer quantity;
 
-    public OrderItem(Menu menu, Integer quantity) {
+    public OrderItem(MenuItem menu, Integer quantity) {
         this.menu = menu;
         this.quantity = quantity;
     }
 
-    public Menu getMenu() {
+    public MenuItem getMenu() {
         return this.menu;
     }
 

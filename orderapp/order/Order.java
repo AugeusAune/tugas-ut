@@ -1,8 +1,9 @@
-package orderapp;
+package orderapp.order;
 
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Scanner;
+import orderapp.menu.MenuItem;
 
 public class Order {
 
@@ -10,13 +11,13 @@ public class Order {
 
     private final ArrayList<OrderItem> items;
 
-    private final ArrayList<Menu> menus;
+    private final ArrayList<MenuItem> menus;
 
     private OrderReceipt receipt;
 
     private String customerName;
 
-    public Order(Scanner scanner, ArrayList<Menu> menus) {
+    public Order(Scanner scanner, ArrayList<MenuItem> menus) {
         this.items = new ArrayList<>();
         this.menus = menus;
         this.scanner = scanner;
@@ -52,7 +53,7 @@ public class Order {
         System.out.println("Masukan Pesanan anda: ");
         String menuName = this.scanner.nextLine().trim();
 
-        Optional<Menu> menu = this.searchMenu(menuName);
+        Optional<MenuItem> menu = this.searchMenu(menuName);
 
         if (menu.isEmpty()) {
             System.out.println("Menu tidak ditemukan, silahkan coba isi kembali");
@@ -99,8 +100,8 @@ public class Order {
         }
     }
 
-    private Optional<Menu> searchMenu(String menuName) {
-        for (Menu menu : menus) {
+    private Optional<MenuItem> searchMenu(String menuName) {
+        for (MenuItem menu : menus) {
             if (menu.getName().equalsIgnoreCase(menuName)) {
                 return Optional.of(menu);
             }

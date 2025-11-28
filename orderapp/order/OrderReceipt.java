@@ -1,6 +1,7 @@
-package orderapp;
+package orderapp.order;
 
 import java.text.NumberFormat;
+import orderapp.menu.MenuItem;
 
 public class OrderReceipt {
 
@@ -95,7 +96,7 @@ public class OrderReceipt {
 
     private void buildDetailReceipt() {
         for (OrderItem orderItem : order.getOrderItems()) {
-            Menu menu = orderItem.getMenu();
+            MenuItem menu = orderItem.getMenu();
             int quantity = orderItem.getQuantity();
             double itemTotal = menu.getPrice() * quantity;
             calculatedSubTotal += itemTotal;
@@ -106,12 +107,12 @@ public class OrderReceipt {
                     formatter.format(itemTotal)
             );
 
-            if (menu.getCategory() == MenuCategory.MAKANAN) {
+            if ("Makanan".equals(menu.getCategory())) {
                 foodDetails.append(displayLine);
                 continue;
             }
 
-            if (menu.getCategory() == MenuCategory.MINUMAN) {
+            if ("Minuman".equals(menu.getCategory())) {
                 beverageDetails.append(displayLine);
             }
         }
@@ -121,8 +122,8 @@ public class OrderReceipt {
         double cheapest = Double.MAX_VALUE;
 
         for (OrderItem item : order.getOrderItems()) {
-            Menu menu = item.getMenu();
-            if (menu.getCategory() == MenuCategory.MINUMAN && menu.getPrice() < cheapest) {
+            MenuItem menu = item.getMenu();
+            if ("Minuman".equals(menu.getCategory()) && menu.getPrice() < cheapest) {
                 cheapest = menu.getPrice();
             }
         }
