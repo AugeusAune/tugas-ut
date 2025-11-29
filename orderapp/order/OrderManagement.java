@@ -53,11 +53,11 @@ public class OrderManagement {
                 }
             } catch (IOException e) {
                 gagal++;
-                System.out.println("✗ Gagal memuat " + file.getName() + ": " + e.getMessage());
+                System.out.println("Gagal memuat " + file.getName() + ": " + e.getMessage());
             }
         }
 
-        System.out.println("✓ Berhasil memuat " + berhasil + " pesanan dari file");
+        System.out.println("Berhasil memuat " + berhasil + " pesanan dari file");
         if (gagal > 0) {
             System.out.println("⚠ " + gagal + " file gagal dimuat");
         }
@@ -172,7 +172,7 @@ public class OrderManagement {
      */
     public void showOrders() {
         if (daftarPesanan.isEmpty()) {
-            System.out.println("\n✗ Belum ada pesanan yang dibuat.");
+            System.out.println("\nBelum ada pesanan yang dibuat.");
             return;
         }
 
@@ -215,7 +215,7 @@ public class OrderManagement {
      */
     public void showOrderDetail(Scanner scanner) {
         if (daftarPesanan.isEmpty()) {
-            System.out.println("\n✗ Belum ada pesanan yang dibuat.");
+            System.out.println("\nBelum ada pesanan yang dibuat.");
             return;
         }
 
@@ -234,7 +234,7 @@ public class OrderManagement {
             File file = new File(namaFile);
 
             if (!file.exists()) {
-                System.out.println("✗ Struk pesanan #" + orderNumber + " tidak ditemukan!");
+                System.out.println("Struk pesanan #" + orderNumber + " tidak ditemukan!");
                 return;
             }
 
@@ -250,9 +250,9 @@ public class OrderManagement {
             }
 
         } catch (NumberFormatException e) {
-            System.out.println("✗ Input tidak valid!");
+            System.out.println("Input tidak valid!");
         } catch (IOException e) {
-            System.out.println("✗ Error membaca file: " + e.getMessage());
+            System.out.println("Error membaca file: " + e.getMessage());
         }
     }
 
@@ -284,7 +284,7 @@ public class OrderManagement {
      */
     public void showStat() {
         if (daftarPesanan.isEmpty()) {
-            System.out.println("\n✗ Belum ada pesanan untuk ditampilkan statistiknya.");
+            System.out.println("\nBelum ada pesanan untuk ditampilkan statistiknya.");
             return;
         }
 

@@ -51,7 +51,7 @@ public class Order {
                     String namaItem = scanner.nextLine().trim();
 
                     if (namaItem.isEmpty()) {
-                        System.out.println("✗ Nama menu tidak boleh kosong!");
+                        System.out.println("Nama menu tidak boleh kosong!");
                         continue;
                     }
 
@@ -60,7 +60,7 @@ public class Order {
 
                     // Validasi: tidak bisa memesan diskon
                     if (item instanceof Diskon) {
-                        System.out.println("✗ Diskon tidak bisa dipesan sebagai item!");
+                        System.out.println("Diskon tidak bisa dipesan sebagai item!");
                         continue;
                     }
 
@@ -69,7 +69,7 @@ public class Order {
                     int jumlah = getIntInput(scanner);
 
                     if (jumlah <= 0) {
-                        System.out.println("✗ Jumlah harus lebih dari 0!");
+                        System.out.println("Jumlah harus lebih dari 0!");
                         continue;
                     }
 
@@ -77,7 +77,7 @@ public class Order {
                     addOrderItem(item, jumlah);
 
                 } catch (Exception e) {
-                    System.out.println("✗ " + e.getMessage());
+                    System.out.println("" + e.getMessage());
                     System.out.println("Silakan coba lagi.");
                     continue;
                 }
@@ -93,7 +93,7 @@ public class Order {
 
             // Cek apakah ada pesanan
             if (isEmpty()) {
-                System.out.println("✗ Tidak ada pesanan yang dibuat.");
+                System.out.println("Tidak ada pesanan yang dibuat.");
                 return;
             }
 
@@ -108,7 +108,7 @@ public class Order {
             saveStructToFile();
 
         } catch (Exception e) {
-            System.out.println("✗ Terjadi kesalahan dalam proses order: " + e.getMessage());
+            System.out.println("Terjadi kesalahan dalam proses order: " + e.getMessage());
         }
     }
 
@@ -126,7 +126,7 @@ public class Order {
 
         ArrayList<Diskon> daftarDiskon = menuManagement.getDiscounts();
         if (daftarDiskon.isEmpty()) {
-            System.out.println("✗ Tidak ada diskon tersedia saat ini.");
+            System.out.println("Tidak ada diskon tersedia saat ini.");
             return;
         }
 
@@ -149,20 +149,20 @@ public class Order {
                 }
 
                 if (nomorDiskon < 1 || nomorDiskon > daftarDiskon.size()) {
-                    System.out.println("✗ Nomor diskon tidak valid! Pilih antara 1-" + daftarDiskon.size());
+                    System.out.println("Nomor diskon tidak valid! Pilih antara 1-" + daftarDiskon.size());
                     continue;
                 }
 
                 // Ambil diskon berdasarkan index (nomor - 1)
                 Diskon diskon = daftarDiskon.get(nomorDiskon - 1);
                 useDiscount(diskon);
-                System.out.println("✓ Diskon " + diskon.getName() + " berhasil diterapkan!");
+                System.out.println("Diskon " + diskon.getName() + " berhasil diterapkan!");
                 break;
 
             } catch (NumberFormatException e) {
-                System.out.println("✗ Input tidak valid! Masukkan nomor diskon.");
+                System.out.println("Input tidak valid! Masukkan nomor diskon.");
             } catch (Exception e) {
-                System.out.println("✗ " + e.getMessage());
+                System.out.println("" + e.getMessage());
                 System.out.println("Lanjut tanpa diskon.");
                 break;
             }
@@ -199,7 +199,7 @@ public class Order {
             totalItem.add(jumlah);
         }
 
-        System.out.println("✓ " + jumlah + "x " + item.getName() + " ditambahkan ke pesanan");
+        System.out.println("" + jumlah + "x " + item.getName() + " ditambahkan ke pesanan");
     }
 
     /**
@@ -251,7 +251,7 @@ public class Order {
     public void showStruct() {
         try {
             if (orderItem.isEmpty()) {
-                System.out.println("✗ Pesanan masih kosong!");
+                System.out.println("Pesanan masih kosong!");
                 return;
             }
 
@@ -293,7 +293,7 @@ public class Order {
             System.out.println("            Terima kasih atas kunjungan Anda!");
             System.out.println("=".repeat(70) + "\n");
         } catch (Exception e) {
-            System.out.println("✗ Gagal menampilkan struk: " + e.getMessage());
+            System.out.println("Gagal menampilkan struk: " + e.getMessage());
         }
     }
 
@@ -352,9 +352,9 @@ public class Order {
             writer.println("            Terima kasih atas kunjungan Anda!");
             writer.println("=".repeat(70));
 
-            System.out.println("✓ Struk berhasil disimpan ke file: " + namaFile);
+            System.out.println("Struk berhasil disimpan ke file: " + namaFile);
         } catch (IOException e) {
-            System.out.println("✗ Error menyimpan struk: " + e.getMessage());
+            System.out.println("Error menyimpan struk: " + e.getMessage());
         } finally {
             if (writer != null) {
                 writer.close();

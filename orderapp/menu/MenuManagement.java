@@ -73,10 +73,10 @@ public class MenuManagement {
                     case 0 ->
                         back = true;
                     default ->
-                        System.out.println("✗ Pilihan tidak valid.");
+                        System.out.println("Pilihan tidak valid.");
                 }
             } catch (Exception e) {
-                System.out.println("✗ Terjadi kesalahan: " + e.getMessage());
+                System.out.println("Terjadi kesalahan: " + e.getMessage());
             }
         }
     }
@@ -103,11 +103,11 @@ public class MenuManagement {
             String type = this.getStringInput(scanner);
 
             this.add(name, price, type, category);
-            System.out.println("✓ Menu \"" + name + "\" berhasil ditambahkan!");
+            System.out.println("Menu \"" + name + "\" berhasil ditambahkan!");
         } catch (IllegalArgumentException e) {
-            System.out.println("✗ " + e.getMessage());
+            System.out.println("" + e.getMessage());
         } catch (Exception e) {
-            System.out.println("✗ Gagal menambahkan menu: " + e.getMessage());
+            System.out.println("Gagal menambahkan menu: " + e.getMessage());
         }
     }
 
@@ -124,18 +124,18 @@ public class MenuManagement {
             }
 
             this.addDiscount(name, persen);
-            System.out.println("✓ Diskon \"" + name + "\" berhasil ditambahkan!");
+            System.out.println("Diskon \"" + name + "\" berhasil ditambahkan!");
         } catch (IllegalArgumentException e) {
-            System.out.println("✗ " + e.getMessage());
+            System.out.println("" + e.getMessage());
         } catch (Exception e) {
-            System.out.println("✗ Gagal menambahkan diskon: " + e.getMessage());
+            System.out.println("Gagal menambahkan diskon: " + e.getMessage());
         }
     }
 
     public void editMenuViaInput(Scanner scanner) {
         try {
             if (menus.isEmpty()) {
-                System.out.println("✗ Tidak ada menu tersedia.");
+                System.out.println("Tidak ada menu tersedia.");
                 return;
             }
 
@@ -163,7 +163,7 @@ public class MenuManagement {
             }
 
             if (selectedMenu instanceof Diskon) {
-                System.out.println("✗ Edit diskon belum didukung. Silakan hapus dan tambah ulang.");
+                System.out.println("Edit diskon belum didukung. Silakan hapus dan tambah ulang.");
                 return;
             }
 
@@ -207,23 +207,23 @@ public class MenuManagement {
                 }
 
                 clearStringMenus();
-                System.out.println("\n✓ Menu berhasil diperbarui!");
+                System.out.println("\nMenu berhasil diperbarui!");
             } else {
-                System.out.println("\n✓ Perubahan dibatalkan.");
+                System.out.println("\nPerubahan dibatalkan.");
             }
         } catch (IllegalArgumentException e) {
-            System.out.println("✗ " + e.getMessage());
+            System.out.println("" + e.getMessage());
         } catch (IndexOutOfBoundsException e) {
-            System.out.println("✗ Nomor menu tidak valid!");
+            System.out.println("Nomor menu tidak valid!");
         } catch (Exception e) {
-            System.out.println("✗ Gagal mengedit menu: " + e.getMessage());
+            System.out.println("Gagal mengedit menu: " + e.getMessage());
         }
     }
 
     public void deleteMenuViaInput(Scanner scanner) {
         try {
             if (menus.isEmpty()) {
-                System.out.println("✗ Tidak ada menu tersedia.");
+                System.out.println("Tidak ada menu tersedia.");
                 return;
             }
 
@@ -259,21 +259,21 @@ public class MenuManagement {
                 String menuName = selectedMenu.getName();
                 menus.remove(menuNumber - 1);
                 clearStringMenus();
-                System.out.println("\n✓ Menu \"" + menuName + "\" berhasil dihapus!");
+                System.out.println("\nMenu \"" + menuName + "\" berhasil dihapus!");
             } else {
-                System.out.println("\n✓ Penghapusan dibatalkan.");
+                System.out.println("\nPenghapusan dibatalkan.");
             }
         } catch (IndexOutOfBoundsException e) {
-            System.out.println("✗ Nomor menu tidak valid!");
+            System.out.println("Nomor menu tidak valid!");
         } catch (Exception e) {
-            System.out.println("✗ Gagal menghapus menu: " + e.getMessage());
+            System.out.println("Gagal menghapus menu: " + e.getMessage());
         }
     }
 
     public void printMenu() {
         try {
             if (menus.isEmpty()) {
-                System.out.println("\n✗ Menu masih kosong!");
+                System.out.println("\nMenu masih kosong!");
                 return;
             }
 
@@ -305,7 +305,7 @@ public class MenuManagement {
 
             System.out.println("=".repeat(50));
         } catch (Exception e) {
-            System.out.println("✗ Gagal menampilkan menu: " + e.getMessage());
+            System.out.println("Gagal menampilkan menu: " + e.getMessage());
         }
     }
 
@@ -315,7 +315,7 @@ public class MenuManagement {
     public void printMenuWithoutDiscount() {
         try {
             if (menus.isEmpty()) {
-                System.out.println("\n✗ Menu masih kosong!");
+                System.out.println("\nMenu masih kosong!");
                 return;
             }
 
@@ -355,7 +355,7 @@ public class MenuManagement {
 
             System.out.println("=".repeat(50));
         } catch (Exception e) {
-            System.out.println("✗ Gagal menampilkan menu: " + e.getMessage());
+            System.out.println("Gagal menampilkan menu: " + e.getMessage());
         }
     }
 
@@ -367,16 +367,16 @@ public class MenuManagement {
                 bw.write(it.toFileString());
                 bw.newLine();
             }
-            System.out.println("✓ Menu berhasil disimpan ke file: " + filename);
+            System.out.println("Menu berhasil disimpan ke file: " + filename);
         } catch (IOException e) {
-            System.out.println("✗ Error menyimpan menu: " + e.getMessage());
+            System.out.println("Error menyimpan menu: " + e.getMessage());
             throw e;
         } finally {
             if (bw != null) {
                 try {
                     bw.close();
                 } catch (IOException e) {
-                    System.out.println("✗ Error menutup file: " + e.getMessage());
+                    System.out.println("Error menutup file: " + e.getMessage());
                 }
             }
         }
@@ -438,26 +438,26 @@ public class MenuManagement {
                     }
                 } catch (NumberFormatException e) {
                     errorCount++;
-                    System.out.println("✗ Error format data pada baris: " + line);
+                    System.out.println("Error format data pada baris: " + line);
                 } catch (Exception e) {
                     errorCount++;
-                    System.out.println("✗ Error memproses baris: " + line);
+                    System.out.println("Error memproses baris: " + line);
                 }
             }
 
-            System.out.println("✓ Berhasil memuat " + count + " item dari file");
+            System.out.println("Berhasil memuat " + count + " item dari file");
             if (errorCount > 0) {
                 System.out.println("⚠ " + errorCount + " baris gagal dimuat");
             }
         } catch (IOException e) {
-            System.out.println("✗ Error membaca file: " + e.getMessage());
+            System.out.println("Error membaca file: " + e.getMessage());
             throw e;
         } finally {
             if (br != null) {
                 try {
                     br.close();
                 } catch (IOException e) {
-                    System.out.println("✗ Error menutup file: " + e.getMessage());
+                    System.out.println("Error menutup file: " + e.getMessage());
                 }
             }
         }
@@ -573,9 +573,9 @@ public class MenuManagement {
                     return category;
                 }
 
-                System.out.println("✗ Kategori tidak valid! Coba lagi.\n");
+                System.out.println("Kategori tidak valid! Coba lagi.\n");
             } catch (Exception e) {
-                System.out.println("✗ Error: " + e.getMessage());
+                System.out.println("Error: " + e.getMessage());
             }
         }
     }

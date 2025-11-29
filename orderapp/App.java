@@ -77,18 +77,18 @@ public class App {
                     case 8:
                         // Simpan menu sebelum keluar
                         saveMenu();
-                        System.out.println("\n✓ Terima kasih telah menggunakan aplikasi!");
+                        System.out.println("\nTerima kasih telah menggunakan aplikasi!");
                         System.out.println("Sampai jumpa! 👋\n");
                         running = false;
                         break;
                     default:
-                        System.out.println("✗ Pilihan tidak valid! Silakan pilih 1-8.");
+                        System.out.println("Pilihan tidak valid! Silakan pilih 1-8.");
                 }
 
             } catch (NumberFormatException e) {
-                System.out.println("✗ Input harus berupa angka!");
+                System.out.println("Input harus berupa angka!");
             } catch (Exception e) {
-                System.out.println("✗ Terjadi kesalahan: " + e.getMessage());
+                System.out.println("Terjadi kesalahan: " + e.getMessage());
             }
         }
 
@@ -118,7 +118,7 @@ public class App {
         try {
             // Cek apakah menu kosong
             if (menuManagement.getMenus().isEmpty()) {
-                System.out.println("\n✗ Menu masih kosong! Tambahkan item terlebih dahulu.");
+                System.out.println("\nMenu masih kosong! Tambahkan item terlebih dahulu.");
                 return;
             }
 
@@ -145,7 +145,7 @@ public class App {
             }
 
         } catch (Exception e) {
-            System.out.println("✗ Gagal membuat pesanan: " + e.getMessage());
+            System.out.println("Gagal membuat pesanan: " + e.getMessage());
         }
     }
 
@@ -176,7 +176,7 @@ public class App {
         try {
             menuManagement.saveToFile(MENU_FILE);
         } catch (IOException e) {
-            System.out.println("✗ Gagal menyimpan menu: " + e.getMessage());
+            System.out.println("Gagal menyimpan menu: " + e.getMessage());
         }
     }
 
