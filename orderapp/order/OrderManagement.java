@@ -51,7 +51,7 @@ public class OrderManagement {
                     daftarPesanan.add(order);
                     berhasil++;
                 }
-            } catch (Exception e) {
+            } catch (IOException e) {
                 gagal++;
                 System.out.println("✗ Gagal memuat " + file.getName() + ": " + e.getMessage());
             }
@@ -67,9 +67,7 @@ public class OrderManagement {
      * Load Order dari file struk tertentu
      */
     private Order loadOrderFromStruct(File file) throws IOException {
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new FileReader(file));
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
 
             String customerName = "";
@@ -157,10 +155,6 @@ public class OrderManagement {
             }
 
             return null;
-        } finally {
-            if (reader != null) {
-                reader.close();
-            }
         }
     }
 
@@ -193,8 +187,7 @@ public class OrderManagement {
             String diskonInfo = "Tidak ada";
             int totalItem = 0;
 
-            if (order instanceof OrderSummary) {
-                OrderSummary summary = (OrderSummary) order;
+            if (order instanceof OrderSummary summary) {
                 diskonInfo = summary.getNamaDiskon() != null ? summary.getNamaDiskon() : "Tidak ada";
                 totalItem = summary.gettotalItem();
             } else {
@@ -245,10 +238,8 @@ public class OrderManagement {
                 return;
             }
 
-            // Tampilkan isi file struk
-            BufferedReader reader = null;
-            try {
-                reader = new BufferedReader(new FileReader(file));
+            try ( // Tampilkan isi file struk
+                    BufferedReader reader = new BufferedReader(new FileReader(file))) {
                 String line;
                 System.out.println();
 
@@ -256,10 +247,6 @@ public class OrderManagement {
                     System.out.println(line);
                 }
                 System.out.println();
-            } finally {
-                if (reader != null) {
-                    reader.close();
-                }
             }
 
         } catch (NumberFormatException e) {

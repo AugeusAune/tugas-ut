@@ -300,6 +300,7 @@ public class Order {
     /**
      * Menyimpan struk ke file (File I/O)
      */
+    @SuppressWarnings("ConvertToTryWithResources")
     public void saveStructToFile() {
         // Buat folder orders-file jika belum ada
         File folder = new File("./orderapp/storage/orders-file/");

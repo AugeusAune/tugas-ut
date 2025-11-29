@@ -158,6 +158,10 @@ public class MenuManagement {
 
             MenuItem selectedMenu = menus.get(menuNumber - 1);
 
+            if (selectedMenu == null) {
+                System.err.println("Menu yang dipilih tidak ada");
+            }
+
             if (selectedMenu instanceof Diskon) {
                 System.out.println("✗ Edit diskon belum didukung. Silakan hapus dan tambah ulang.");
                 return;
@@ -193,10 +197,13 @@ public class MenuManagement {
                 selectedMenu.setPrice(newPrice);
 
                 // Update type untuk Makanan atau Minuman
-                if (selectedMenu instanceof Makanan) {
-                    ((Makanan) selectedMenu).setType(newType);
-                } else if (selectedMenu instanceof Minuman) {
-                    ((Minuman) selectedMenu).setType(newType);
+                switch (selectedMenu) {
+                    case Makanan makanan ->
+                        makanan.setType(newType);
+                    case Minuman minuman ->
+                        minuman.setType(newType);
+                    default -> {
+                    }
                 }
 
                 clearStringMenus();
@@ -487,8 +494,8 @@ public class MenuManagement {
     public ArrayList<Diskon> getDiscounts() {
         ArrayList<Diskon> daftarDiskon = new ArrayList<>();
         for (MenuItem item : menus) {
-            if (item instanceof Diskon) {
-                daftarDiskon.add((Diskon) item);
+            if (item instanceof Diskon diskon) {
+                daftarDiskon.add(diskon);
             }
         }
         return daftarDiskon;
@@ -508,19 +515,27 @@ public class MenuManagement {
         this.clearStringMenus();
     }
 
+    @SuppressWarnings("ConvertToStringSwitch")
     private void buildStringMenus() {
         for (MenuItem menu : this.menus) {
-            if ("Makanan".equals(menu.getCategory())) {
+            if (menu.getCategory().equals("Makanan")) {
                 String displayMenu = String.format("%-28s Rp. %s\n",
                         menu.getName(),
                         this.formatter.format(menu.getPrice()));
                 this.foodMenus.append(displayMenu);
-            } else if ("Minuman".equals(menu.getCategory())) {
+                continue;
+
+            }
+
+            if (menu.getCategory().equals("Minuman")) {
                 String displayMenu = String.format("%-28s Rp. %s\n",
                         menu.getName(),
                         this.formatter.format(menu.getPrice()));
                 this.beverageMenus.append(displayMenu);
-            } else if ("Diskon".equals(menu.getCategory())) {
+                continue;
+            }
+
+            if (menu.getCategory().equals("Diskon")) {
                 Diskon d = (Diskon) menu;
                 String diskonDisplay = String.format("%-28s %.0f%% off\n",
                         d.getName(), d.getPersenDiskon());
