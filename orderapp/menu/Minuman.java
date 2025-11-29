@@ -1,8 +1,7 @@
 package orderapp.menu;
 
 /**
- * Kelas Minuman sebagai turunan dari MenuItem Menerapkan konsep Inheritance dan
- * Polymorphism
+ * Kelas Minuman sebagai turunan dari MenuItem
  */
 public class Minuman extends MenuItem {
 

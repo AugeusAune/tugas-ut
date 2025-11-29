@@ -1,8 +1,7 @@
 package orderapp.menu;
 
 /**
- * Kelas Diskon sebagai turunan dari MenuItem Menerapkan konsep Inheritance dan
- * Polymorphism
+ * Kelas Diskon sebagai turunan dari MenuItem
  */
 public class Diskon extends MenuItem {
 

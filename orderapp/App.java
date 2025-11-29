@@ -7,18 +7,13 @@ import java.util.Scanner;
 import java.text.NumberFormat;
 import java.io.IOException;
 
-/**
- * Kelas utama untuk menjalankan aplikasi Manajemen Restoran Menerapkan semua
- * konsep OOP: Abstraksi, Inheritance, Encapsulation, Polymorphism Exception
- * Handling, File I/O, Struktur Keputusan, dan Pengulangan
- */
 public class App {
 
     private MenuManagement menuManagement;
     private OrderManagement orderManagement;
     private Scanner scanner;
     private NumberFormat formatter;
-    private final String MENU_FILE = "menu_restoran.txt";
+    private final String MENU_FILE = "orderapp/storage/menu_restoran.txt";
 
     public void run() {
         scanner = new Scanner(System.in);
@@ -45,13 +40,13 @@ public class App {
 
         // Memuat pesanan yang tersimpan
         System.out.println("\nMemuat pesanan tersimpan...");
-        orderManagement.loadPesananDariFile();
+        orderManagement.loadMenuFromFile();
 
         // Loop menu utama (Struktur Pengulangan)
         boolean running = true;
         while (running) {
             try {
-                tampilkanMenuUtama();
+                showAllMenu();
 
                 System.out.print("\n➤ Pilih menu (1-8): ");
                 int pilihan = getIntInput();
@@ -65,23 +60,23 @@ public class App {
                         menuManagement.showMenuManagement(scanner);
                         break;
                     case 3:
-                        buatPesanan();
+                        createOrder();
                         break;
                     case 4:
-                        lihatSemuaPesanan();
+                        showAllOrders();
                         break;
                     case 5:
-                        lihatDetailPesanan();
+                        showOrderDetail();
                         break;
                     case 6:
-                        lihatStatistikPesanan();
+                        showStatOrder();
                         break;
                     case 7:
-                        simpanMenu();
+                        saveMenu();
                         break;
                     case 8:
                         // Simpan menu sebelum keluar
-                        simpanMenu();
+                        saveMenu();
                         System.out.println("\n✓ Terima kasih telah menggunakan aplikasi!");
                         System.out.println("Sampai jumpa! 👋\n");
                         running = false;
@@ -101,7 +96,7 @@ public class App {
     }
 
     // Menampilkan menu utama
-    private void tampilkanMenuUtama() {
+    private void showAllMenu() {
         System.out.println("\n" + "=".repeat(60));
         System.out.println("                    MENU UTAMA RESTORAN");
         System.out.println("=".repeat(60));
@@ -117,11 +112,9 @@ public class App {
     }
 
     /**
-     * Fitur untuk membuat pesanan dengan mekanisme baru: 1. Input nama
-     * pelanggan 2. Loop: Pesan item -> Mau pesan lagi? (Y/N) 3. Mau pakai
-     * diskon? (Y/N) 4. Tampilkan dan simpan struk
+     * Fitur untuk membuat pesanan
      */
-    private void buatPesanan() {
+    private void createOrder() {
         try {
             // Cek apakah menu kosong
             if (menuManagement.getMenus().isEmpty()) {
@@ -135,20 +128,20 @@ public class App {
 
             // Input nama pelanggan
             System.out.print("Nama pelanggan: ");
-            String namaPelanggan = scanner.nextLine().trim();
+            String customerName = scanner.nextLine().trim();
 
-            while (namaPelanggan.isEmpty()) {
+            while (customerName.isEmpty()) {
                 System.out.print("Nama tidak boleh kosong! Masukkan nama: ");
-                namaPelanggan = scanner.nextLine().trim();
+                customerName = scanner.nextLine().trim();
             }
 
             // Buat objek Order dan proses pesanan
-            Order order = new Order(namaPelanggan, formatter);
-            order.prosesOrder(scanner, menuManagement);
+            Order order = new Order(customerName, formatter);
+            order.processOrder(scanner, menuManagement);
 
             // Simpan order ke OrderManagement jika tidak kosong
             if (!order.isEmpty()) {
-                orderManagement.tambahPesanan(order);
+                orderManagement.addOrder(order);
             }
 
         } catch (Exception e) {
@@ -159,27 +152,27 @@ public class App {
     /**
      * Menampilkan daftar semua pesanan yang pernah dibuat
      */
-    private void lihatSemuaPesanan() {
-        orderManagement.tampilkanDaftarPesanan();
+    private void showAllOrders() {
+        orderManagement.showOrders();
     }
 
     /**
      * Menampilkan detail pesanan tertentu berdasarkan nomor
      */
-    private void lihatDetailPesanan() {
-        orderManagement.tampilkanDetailPesanan(scanner);
+    private void showOrderDetail() {
+        orderManagement.showOrderDetail(scanner);
     }
 
     /**
      * Menampilkan statistik pesanan (total pesanan, total pendapatan,
      * rata-rata)
      */
-    private void lihatStatistikPesanan() {
-        orderManagement.tampilkanStatistik();
+    private void showStatOrder() {
+        orderManagement.showStat();
     }
 
     // Fitur untuk menyimpan menu ke file
-    private void simpanMenu() {
+    private void saveMenu() {
         try {
             menuManagement.saveToFile(MENU_FILE);
         } catch (IOException e) {

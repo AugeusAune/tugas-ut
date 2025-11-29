@@ -11,36 +11,32 @@ import java.time.format.DateTimeFormatter;
 import java.text.NumberFormat;
 
 /**
- * Kelas Order untuk mengelola pesanan pelanggan Menerapkan konsep
- * Encapsulation, Exception Handling, dan File I/O Dengan mekanisme: Pesan ->
- * Mau pesan lagi? -> Terapkan diskon -> Cetak struk
+ * Kelas Order untuk mengelola pesanan
  */
 public class Order {
 
-    private final ArrayList<MenuItem> itemPesanan;
-    private final ArrayList<Integer> jumlahItem;
-    private Diskon diskonDipakai;
-    private String namaPelanggan;
-    protected static int nomorPesananCounter = 1;
-    protected int nomorPesanan;
+    private final ArrayList<MenuItem> orderItem;
+    private final ArrayList<Integer> totalItem;
+    private Diskon usedDiscount;
+    private String customerName;
+    protected static int orderNumberCounter = 1;
+    protected int orderNumber;
     private NumberFormat formatter;
 
     // Constructor
-    public Order(String namaPelanggan, NumberFormat formatter) {
-        this.itemPesanan = new ArrayList<>();
-        this.jumlahItem = new ArrayList<>();
-        this.namaPelanggan = namaPelanggan;
-        this.nomorPesanan = nomorPesananCounter++;
-        this.diskonDipakai = null;
+    public Order(String customerName, NumberFormat formatter) {
+        this.orderItem = new ArrayList<>();
+        this.totalItem = new ArrayList<>();
+        this.customerName = customerName;
+        this.orderNumber = orderNumberCounter++;
+        this.usedDiscount = null;
         this.formatter = formatter;
     }
 
     /**
-     * Metode utama untuk proses pemesanan dengan flow: 1. Pesan item (tanpa
-     * menampilkan diskon) 2. Tanya "Mau pesan lagi?" (Y/N) 3. Jika N, tanya
-     * "Mau pakai diskon?" (Y/N) 4. Tampilkan dan simpan struk
+     * Metode utama untuk proses pemesanan
      */
-    public void prosesOrder(Scanner scanner, MenuManagement menuManagement) {
+    public void processOrder(Scanner scanner, MenuManagement menuManagement) {
         try {
             boolean pesanLagi = true;
 
@@ -48,7 +44,7 @@ public class Order {
             while (pesanLagi) {
                 try {
                     // Tampilkan menu TANPA diskon
-                    menuManagement.printMenuTanpaDiskon();
+                    menuManagement.printMenuWithoutDiscount();
 
                     // Input nama item
                     System.out.print("\nMasukkan nama menu yang dipesan: ");
@@ -60,7 +56,7 @@ public class Order {
                     }
 
                     // Cari item di menu
-                    MenuItem item = menuManagement.cariMenu(namaItem);
+                    MenuItem item = menuManagement.searchMenu(namaItem);
 
                     // Validasi: tidak bisa memesan diskon
                     if (item instanceof Diskon) {
@@ -78,7 +74,7 @@ public class Order {
                     }
 
                     // Tambahkan ke pesanan
-                    tambahItemPesanan(item, jumlah);
+                    addOrderItem(item, jumlah);
 
                 } catch (Exception e) {
                     System.out.println("✗ " + e.getMessage());
@@ -101,21 +97,15 @@ public class Order {
                 return;
             }
 
-            // Tanya apakah mau pakai diskon
-            System.out.print("\nMau pakai diskon? (Y/N): ");
-            String pakaiDiskon = getYesNoInput(scanner);
-
-            if (pakaiDiskon.equalsIgnoreCase("Y")) {
-                terapkanDiskonInteraktif(scanner, menuManagement);
-            }
+            useDiscountInteraktif(scanner, menuManagement);
 
             // Tampilkan dan simpan struk
             System.out.println("\n" + "=".repeat(70));
             System.out.println("              PESANAN BERHASIL DIBUAT!");
             System.out.println("=".repeat(70));
 
-            tampilkanStruk();
-            simpanStrukKeFile();
+            showStruct();
+            saveStructToFile();
 
         } catch (Exception e) {
             System.out.println("✗ Terjadi kesalahan dalam proses order: " + e.getMessage());
@@ -125,45 +115,64 @@ public class Order {
     /**
      * Metode untuk menerapkan diskon secara interaktif
      */
-    private void terapkanDiskonInteraktif(Scanner scanner, MenuManagement menuManagement) {
-        try {
-            ArrayList<Diskon> daftarDiskon = menuManagement.getDaftarDiskon();
+    private void useDiscountInteraktif(Scanner scanner, MenuManagement menuManagement) {
+        System.out.print("\nMau pakai diskon? (Y/N): ");
+        String pakaiDiskon = getYesNoInput(scanner);
 
-            if (daftarDiskon.isEmpty()) {
-                System.out.println("✗ Tidak ada diskon tersedia saat ini.");
-                return;
-            }
-
-            // Tampilkan diskon yang tersedia
-            System.out.println("\n--- DISKON TERSEDIA ---");
-            for (int i = 0; i < daftarDiskon.size(); i++) {
-                Diskon d = daftarDiskon.get(i);
-                System.out.printf("%d. %s - %.0f%% off\n",
-                        i + 1, d.getName(), d.getPersenDiskon());
-            }
-
-            System.out.print("\nMasukkan nama diskon yang ingin dipakai: ");
-            String namaDiskon = scanner.nextLine().trim();
-
-            if (namaDiskon.isEmpty()) {
-                System.out.println("✗ Nama diskon tidak boleh kosong. Lanjut tanpa diskon.");
-                return;
-            }
-
-            // Cari dan terapkan diskon
-            Diskon diskon = menuManagement.cariDiskon(namaDiskon);
-            terapkanDiskon(diskon);
-
-        } catch (Exception e) {
-            System.out.println("✗ " + e.getMessage());
+        if (!pakaiDiskon.equalsIgnoreCase("Y")) {
             System.out.println("Lanjut tanpa diskon.");
+            return;
+        }
+
+        ArrayList<Diskon> daftarDiskon = menuManagement.getDiscounts();
+        if (daftarDiskon.isEmpty()) {
+            System.out.println("✗ Tidak ada diskon tersedia saat ini.");
+            return;
+        }
+
+        // Tampilkan diskon yang tersedia
+        System.out.println("\n--- DISKON TERSEDIA ---");
+        for (int i = 0; i < daftarDiskon.size(); i++) {
+            Diskon d = daftarDiskon.get(i);
+            System.out.printf("%d. %s - %.0f%% off\n",
+                    i + 1, d.getName(), d.getPersenDiskon());
+        }
+
+        while (true) {
+            try {
+                System.out.print("\nMasukkan nomor diskon yang ingin dipakai (0 untuk batal): ");
+                int nomorDiskon = Integer.parseInt(scanner.nextLine().trim());
+
+                if (nomorDiskon == 0) {
+                    System.out.println("Lanjut tanpa diskon.");
+                    return;
+                }
+
+                if (nomorDiskon < 1 || nomorDiskon > daftarDiskon.size()) {
+                    System.out.println("✗ Nomor diskon tidak valid! Pilih antara 1-" + daftarDiskon.size());
+                    continue;
+                }
+
+                // Ambil diskon berdasarkan index (nomor - 1)
+                Diskon diskon = daftarDiskon.get(nomorDiskon - 1);
+                useDiscount(diskon);
+                System.out.println("✓ Diskon " + diskon.getName() + " berhasil diterapkan!");
+                break;
+
+            } catch (NumberFormatException e) {
+                System.out.println("✗ Input tidak valid! Masukkan nomor diskon.");
+            } catch (Exception e) {
+                System.out.println("✗ " + e.getMessage());
+                System.out.println("Lanjut tanpa diskon.");
+                break;
+            }
         }
     }
 
     /**
      * Menambahkan item ke pesanan
      */
-    public void tambahItemPesanan(MenuItem item, int jumlah) {
+    public void addOrderItem(MenuItem item, int jumlah) {
         if (item == null) {
             throw new IllegalArgumentException("Item tidak boleh null!");
         }
@@ -174,8 +183,8 @@ public class Order {
 
         // Cek apakah item sudah ada dalam pesanan
         int index = -1;
-        for (int i = 0; i < itemPesanan.size(); i++) {
-            if (itemPesanan.get(i).getName().equals(item.getName())) {
+        for (int i = 0; i < orderItem.size(); i++) {
+            if (orderItem.get(i).getName().equals(item.getName())) {
                 index = i;
                 break;
             }
@@ -183,11 +192,11 @@ public class Order {
 
         if (index != -1) {
             // Jika item sudah ada, tambahkan jumlahnya
-            jumlahItem.set(index, jumlahItem.get(index) + jumlah);
+            totalItem.set(index, totalItem.get(index) + jumlah);
         } else {
             // Jika item baru, tambahkan ke list
-            itemPesanan.add(item);
-            jumlahItem.add(jumlah);
+            orderItem.add(item);
+            totalItem.add(jumlah);
         }
 
         System.out.println("✓ " + jumlah + "x " + item.getName() + " ditambahkan ke pesanan");
@@ -196,23 +205,20 @@ public class Order {
     /**
      * Menerapkan diskon
      */
-    public void terapkanDiskon(Diskon diskon) {
+    public void useDiscount(Diskon diskon) {
         if (diskon == null) {
             throw new IllegalArgumentException("Diskon tidak boleh null!");
         }
-
-        this.diskonDipakai = diskon;
-        System.out.println("✓ Diskon " + diskon.getName() + " ("
-                + String.format("%.0f", diskon.getPersenDiskon()) + "%) diterapkan!");
+        this.usedDiscount = diskon;
     }
 
     /**
      * Menghitung subtotal (sebelum diskon)
      */
-    public double hitungSubtotal() {
+    public double calculateSubTotal() {
         double subtotal = 0;
-        for (int i = 0; i < itemPesanan.size(); i++) {
-            subtotal += itemPesanan.get(i).getPrice() * jumlahItem.get(i);
+        for (int i = 0; i < orderItem.size(); i++) {
+            subtotal += orderItem.get(i).getPrice() * totalItem.get(i);
         }
         return subtotal;
     }
@@ -220,10 +226,10 @@ public class Order {
     /**
      * Menghitung total (setelah diskon)
      */
-    public double hitungTotal() {
-        double subtotal = hitungSubtotal();
-        if (diskonDipakai != null) {
-            double potongan = diskonDipakai.hitungDiskon(subtotal);
+    public double calculateTotal() {
+        double subtotal = calculateSubTotal();
+        if (usedDiscount != null) {
+            double potongan = usedDiscount.hitungDiskon(subtotal);
             return subtotal - potongan;
         }
         return subtotal;
@@ -232,9 +238,9 @@ public class Order {
     /**
      * Menghitung jumlah diskon
      */
-    public double hitungJumlahDiskon() {
-        if (diskonDipakai != null) {
-            return diskonDipakai.hitungDiskon(hitungSubtotal());
+    public double calculateDiscount() {
+        if (usedDiscount != null) {
+            return usedDiscount.hitungDiskon(calculateSubTotal());
         }
         return 0;
     }
@@ -242,9 +248,9 @@ public class Order {
     /**
      * Menampilkan struk pesanan
      */
-    public void tampilkanStruk() {
+    public void showStruct() {
         try {
-            if (itemPesanan.isEmpty()) {
+            if (orderItem.isEmpty()) {
                 System.out.println("✗ Pesanan masih kosong!");
                 return;
             }
@@ -252,17 +258,17 @@ public class Order {
             System.out.println("\n" + "=".repeat(70));
             System.out.println("                    STRUK PESANAN RESTORAN");
             System.out.println("=".repeat(70));
-            System.out.println("No. Pesanan : #" + nomorPesanan);
-            System.out.println("Pelanggan   : " + namaPelanggan);
+            System.out.println("No. Pesanan : #" + orderNumber);
+            System.out.println("Pelanggan   : " + customerName);
             System.out.println("Tanggal     : " + LocalDateTime.now().format(
                     DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
             System.out.println("-".repeat(70));
             System.out.printf("%-30s %10s %15s %15s%n", "Item", "Jumlah", "Harga Satuan", "Subtotal");
             System.out.println("-".repeat(70));
 
-            for (int i = 0; i < itemPesanan.size(); i++) {
-                MenuItem item = itemPesanan.get(i);
-                int qty = jumlahItem.get(i);
+            for (int i = 0; i < orderItem.size(); i++) {
+                MenuItem item = orderItem.get(i);
+                int qty = totalItem.get(i);
                 double subtotalItem = item.getPrice() * qty;
                 System.out.printf("%-30s %10d Rp %13s Rp %13s%n",
                         item.getName(), qty,
@@ -272,18 +278,17 @@ public class Order {
 
             System.out.println("-".repeat(70));
             System.out.printf("%-30s %40s Rp %13s%n", "", "SUBTOTAL:",
-                    formatter.format(hitungSubtotal()));
+                    formatter.format(calculateSubTotal()));
 
-            if (diskonDipakai != null) {
+            if (usedDiscount != null) {
                 System.out.printf("%-30s %40s Rp %13s%n", "",
-                        "DISKON (" + diskonDipakai.getName() + " "
-                        + String.format("%.0f", diskonDipakai.getPersenDiskon()) + "%):",
-                        formatter.format(-hitungJumlahDiskon()));
-                System.out.println("-".repeat(70));
+                        "DISKON (" + usedDiscount.getName() + " "
+                        + String.format("%.0f", usedDiscount.getPersenDiskon()) + "%):",
+                        formatter.format(-calculateDiscount()));
             }
 
             System.out.printf("%-30s %40s Rp %13s%n", "", "TOTAL:",
-                    formatter.format(hitungTotal()));
+                    formatter.format(calculateTotal()));
             System.out.println("=".repeat(70));
             System.out.println("            Terima kasih atas kunjungan Anda!");
             System.out.println("=".repeat(70) + "\n");
@@ -295,8 +300,14 @@ public class Order {
     /**
      * Menyimpan struk ke file (File I/O)
      */
-    public void simpanStrukKeFile() {
-        String namaFile = "struk_pesanan_" + nomorPesanan + ".txt";
+    public void saveStructToFile() {
+        // Buat folder orders-file jika belum ada
+        File folder = new File("./orderapp/storage/orders-file/");
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+
+        String namaFile = "./orderapp/storage/orders-file/struk_pesanan_" + orderNumber + ".txt";
         PrintWriter writer = null;
 
         try {
@@ -305,17 +316,17 @@ public class Order {
             writer.println("=".repeat(70));
             writer.println("                    STRUK PESANAN RESTORAN");
             writer.println("=".repeat(70));
-            writer.println("No. Pesanan : #" + nomorPesanan);
-            writer.println("Pelanggan   : " + namaPelanggan);
+            writer.println("No. Pesanan : #" + orderNumber);
+            writer.println("Pelanggan   : " + customerName);
             writer.println("Tanggal     : " + LocalDateTime.now().format(
                     DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
             writer.println("-".repeat(70));
             writer.printf("%-30s %10s %15s %15s%n", "Item", "Jumlah", "Harga Satuan", "Subtotal");
             writer.println("-".repeat(70));
 
-            for (int i = 0; i < itemPesanan.size(); i++) {
-                MenuItem item = itemPesanan.get(i);
-                int qty = jumlahItem.get(i);
+            for (int i = 0; i < orderItem.size(); i++) {
+                MenuItem item = orderItem.get(i);
+                int qty = totalItem.get(i);
                 double subtotalItem = item.getPrice() * qty;
                 writer.printf("%-30s %10d Rp %13s Rp %13s%n",
                         item.getName(), qty,
@@ -325,18 +336,17 @@ public class Order {
 
             writer.println("-".repeat(70));
             writer.printf("%-30s %40s Rp %13s%n", "", "SUBTOTAL:",
-                    formatter.format(hitungSubtotal()));
+                    formatter.format(calculateSubTotal()));
 
-            if (diskonDipakai != null) {
+            if (usedDiscount != null) {
                 writer.printf("%-30s %40s Rp %13s%n", "",
-                        "DISKON (" + diskonDipakai.getName() + " "
-                        + String.format("%.0f", diskonDipakai.getPersenDiskon()) + "%):",
-                        formatter.format(-hitungJumlahDiskon()));
-                writer.println("-".repeat(70));
+                        "DISKON (" + usedDiscount.getName() + " "
+                        + String.format("%.0f", usedDiscount.getPersenDiskon()) + "%):",
+                        formatter.format(-calculateDiscount()));
             }
 
             writer.printf("%-30s %40s Rp %13s%n", "", "TOTAL:",
-                    formatter.format(hitungTotal()));
+                    formatter.format(calculateTotal()));
             writer.println("=".repeat(70));
             writer.println("            Terima kasih atas kunjungan Anda!");
             writer.println("=".repeat(70));
@@ -346,11 +356,7 @@ public class Order {
             System.out.println("✗ Error menyimpan struk: " + e.getMessage());
         } finally {
             if (writer != null) {
-                try {
-                    writer.close();
-                } catch (Exception e) {
-                    System.out.println("✗ Error menutup file: " + e.getMessage());
-                }
+                writer.close();
             }
         }
     }
@@ -385,24 +391,24 @@ public class Order {
     }
 
     // Getter methods
-    public ArrayList<MenuItem> getItemPesanan() {
-        return itemPesanan;
+    public ArrayList<MenuItem> getOrderItem() {
+        return orderItem;
     }
 
-    public String getNamaPelanggan() {
-        return namaPelanggan;
+    public String getCustomerName() {
+        return customerName;
     }
 
-    public int getNomorPesanan() {
-        return nomorPesanan;
+    public int getOrderNumber() {
+        return orderNumber;
     }
 
     public boolean isEmpty() {
-        return itemPesanan.isEmpty();
+        return orderItem.isEmpty();
     }
 
-    public Diskon getDiskonDipakai() {
-        return diskonDipakai;
+    public Diskon getUsedDiscount() {
+        return usedDiscount;
     }
 
     public NumberFormat getFormatter() {
@@ -410,12 +416,12 @@ public class Order {
     }
 
     // Setter methods
-    public void setDiskonDipakai(Diskon diskonDipakai) {
-        this.diskonDipakai = diskonDipakai;
+    public void setUsedDiscount(Diskon usedDiscount) {
+        this.usedDiscount = usedDiscount;
     }
 
-    public void setNamaPelanggan(String namaPelanggan) {
-        this.namaPelanggan = namaPelanggan;
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
 
     public void setFormatter(NumberFormat formatter) {

@@ -1,7 +1,7 @@
 package orderapp.menu;
 
 /**
- * Enum untuk kategori menu Memudahkan pengelolaan kategori dengan type-safe
+ * Enum untuk kategori menu Memudahkan pengelolaan kategori
  */
 public enum MenuCategory {
     MAKANAN("Makanan"),

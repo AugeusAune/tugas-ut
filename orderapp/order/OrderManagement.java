@@ -22,11 +22,17 @@ public class OrderManagement {
     /**
      * Load semua pesanan dari file struk yang ada
      */
-    public void loadPesananDariFile() {
+    public void loadMenuFromFile() {
         daftarPesanan.clear();
 
-        // Cari semua file struk_pesanan_*.txt
-        File currentDir = new File(".");
+        // Cari semua file struk_pesanan_*.txt di folder orders-file
+        File currentDir = new File("./orderapp/storage/orders-file/");
+
+        // Buat folder jika belum ada
+        if (!currentDir.exists()) {
+            currentDir.mkdirs();
+        }
+
         File[] files = currentDir.listFiles((dir, name)
                 -> name.startsWith("struk_pesanan_") && name.endsWith(".txt"));
 
@@ -40,7 +46,7 @@ public class OrderManagement {
 
         for (File file : files) {
             try {
-                Order order = loadOrderDariStruk(file);
+                Order order = loadOrderFromStruct(file);
                 if (order != null) {
                     daftarPesanan.add(order);
                     berhasil++;
@@ -60,17 +66,17 @@ public class OrderManagement {
     /**
      * Load Order dari file struk tertentu
      */
-    private Order loadOrderDariStruk(File file) throws IOException {
+    private Order loadOrderFromStruct(File file) throws IOException {
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new FileReader(file));
             String line;
 
-            String namaPelanggan = "";
-            int nomorPesanan = 0;
+            String customerName = "";
+            int orderNumber = 0;
             double totalBayar = 0;
             String namaDiskon = null;
-            int jumlahItem = 0;
+            int totalItem = 0;
 
             while ((line = reader.readLine()) != null) {
                 line = line.trim();
@@ -78,12 +84,12 @@ public class OrderManagement {
                 // Parse nomor pesanan
                 if (line.startsWith("No. Pesanan : #")) {
                     String nomor = line.replace("No. Pesanan : #", "").trim();
-                    nomorPesanan = Integer.parseInt(nomor);
+                    orderNumber = Integer.parseInt(nomor);
                 }
 
                 // Parse nama pelanggan
                 if (line.startsWith("Pelanggan   :")) {
-                    namaPelanggan = line.replace("Pelanggan   :", "").trim();
+                    customerName = line.replace("Pelanggan   :", "").trim();
                 }
 
                 // Parse total bayar
@@ -99,16 +105,32 @@ public class OrderManagement {
                     }
                 }
 
-                // Parse diskon jika ada
+                // Parse diskon jika ada - FIXED: Ambil nama tanpa persentase
                 if (line.contains("DISKON (") && line.contains("%)")) {
                     int start = line.indexOf("DISKON (") + 8;
                     int end = line.indexOf("%)", start);
                     if (start > 7 && end > start) {
                         String diskonPart = line.substring(start, end).trim();
-                        // Ambil nama diskon saja (tanpa persentase)
-                        int lastSpace = diskonPart.lastIndexOf(" ");
-                        if (lastSpace > 0) {
-                            namaDiskon = diskonPart.substring(0, lastSpace).trim();
+                        // Format: "Member 10" -> ambil "Member" saja
+                        // Pisahkan berdasarkan spasi, ambil semua kecuali angka terakhir
+                        String[] parts = diskonPart.split("\\s+");
+                        if (parts.length >= 2) {
+                            // Ambil semua bagian kecuali angka persentase terakhir
+                            StringBuilder namaBuilder = new StringBuilder();
+                            for (int i = 0; i < parts.length - 1; i++) {
+                                if (i > 0) {
+                                    namaBuilder.append(" ");
+                                }
+                                namaBuilder.append(parts[i]);
+                            }
+                            namaDiskon = namaBuilder.toString().trim();
+                        } else if (parts.length == 1) {
+                            // Jika hanya ada satu kata, kemungkinan format berbeda
+                            // Coba ambil semua sebelum spasi terakhir dengan angka
+                            int lastSpaceIdx = diskonPart.lastIndexOf(" ");
+                            if (lastSpaceIdx > 0) {
+                                namaDiskon = diskonPart.substring(0, lastSpaceIdx).trim();
+                            }
                         }
                     }
                 }
@@ -117,18 +139,18 @@ public class OrderManagement {
                 if (line.matches(".*\\d+\\s+Rp\\s+[0-9.,]+\\s+Rp\\s+[0-9.,]+.*")
                         && !line.contains("Item") && !line.contains("SUBTOTAL")
                         && !line.contains("DISKON") && !line.contains("TOTAL")) {
-                    jumlahItem++;
+                    totalItem++;
                 }
             }
 
             // Buat Order dummy untuk ditampilkan di list
-            if (!namaPelanggan.isEmpty() && nomorPesanan > 0) {
+            if (!customerName.isEmpty() && orderNumber > 0) {
                 OrderSummary summary = new OrderSummary(
-                        nomorPesanan,
-                        namaPelanggan,
+                        orderNumber,
+                        customerName,
                         totalBayar,
                         namaDiskon,
-                        jumlahItem,
+                        totalItem,
                         file.getName()
                 );
                 return summary;
@@ -145,7 +167,7 @@ public class OrderManagement {
     /**
      * Menambahkan pesanan ke daftar dan simpan ke file
      */
-    public void tambahPesanan(Order order) {
+    public void addOrder(Order order) {
         if (order != null && !order.isEmpty()) {
             daftarPesanan.add(order);
         }
@@ -154,7 +176,7 @@ public class OrderManagement {
     /**
      * Menampilkan daftar semua pesanan
      */
-    public void tampilkanDaftarPesanan() {
+    public void showOrders() {
         if (daftarPesanan.isEmpty()) {
             System.out.println("\n✗ Belum ada pesanan yang dibuat.");
             return;
@@ -174,19 +196,19 @@ public class OrderManagement {
             if (order instanceof OrderSummary) {
                 OrderSummary summary = (OrderSummary) order;
                 diskonInfo = summary.getNamaDiskon() != null ? summary.getNamaDiskon() : "Tidak ada";
-                totalItem = summary.getJumlahItem();
+                totalItem = summary.gettotalItem();
             } else {
-                diskonInfo = order.getDiskonDipakai() != null
-                        ? order.getDiskonDipakai().getName()
+                diskonInfo = order.getUsedDiscount() != null
+                        ? order.getUsedDiscount().getName()
                         : "Tidak ada";
-                totalItem = order.getItemPesanan().size();
+                totalItem = order.getOrderItem().size();
             }
 
             System.out.printf("%-8s %-25s %-12d Rp %-22s %-15s%n",
-                    "#" + order.getNomorPesanan(),
-                    order.getNamaPelanggan(),
+                    "#" + order.getOrderNumber(),
+                    order.getCustomerName(),
                     totalItem,
-                    formatter.format(order.hitungTotal()),
+                    formatter.format(order.calculateTotal()),
                     diskonInfo);
         }
 
@@ -198,28 +220,28 @@ public class OrderManagement {
     /**
      * Menampilkan detail pesanan tertentu dengan membaca dari file struk
      */
-    public void tampilkanDetailPesanan(Scanner scanner) {
+    public void showOrderDetail(Scanner scanner) {
         if (daftarPesanan.isEmpty()) {
             System.out.println("\n✗ Belum ada pesanan yang dibuat.");
             return;
         }
 
-        tampilkanDaftarPesanan();
+        showOrders();
 
         System.out.print("Masukkan nomor pesanan untuk melihat detail (atau 0 untuk kembali): ");
         try {
-            int nomorPesanan = Integer.parseInt(scanner.nextLine().trim());
+            int orderNumber = Integer.parseInt(scanner.nextLine().trim());
 
-            if (nomorPesanan == 0) {
+            if (orderNumber == 0) {
                 return;
             }
 
-            // Baca dan tampilkan file struk
-            String namaFile = "struk_pesanan_" + nomorPesanan + ".txt";
+            // Baca dan tampilkan file struk dari folder orders-file
+            String namaFile = "./orderapp/storage/orders-file/struk_pesanan_" + orderNumber + ".txt";
             File file = new File(namaFile);
 
             if (!file.exists()) {
-                System.out.println("✗ Struk pesanan #" + nomorPesanan + " tidak ditemukan!");
+                System.out.println("✗ Struk pesanan #" + orderNumber + " tidak ditemukan!");
                 return;
             }
 
@@ -250,9 +272,9 @@ public class OrderManagement {
     /**
      * Mencari pesanan berdasarkan nomor
      */
-    private Order cariPesanan(int nomorPesanan) {
+    private Order searchOrder(int orderNumber) {
         for (Order order : daftarPesanan) {
-            if (order.getNomorPesanan() == nomorPesanan) {
+            if (order.getOrderNumber() == orderNumber) {
                 return order;
             }
         }
@@ -262,10 +284,10 @@ public class OrderManagement {
     /**
      * Menghitung total pendapatan dari semua pesanan
      */
-    public double hitungTotalPendapatan() {
+    public double calculateTotalIncome() {
         double total = 0;
         for (Order order : daftarPesanan) {
-            total += order.hitungTotal();
+            total += order.calculateTotal();
         }
         return total;
     }
@@ -273,7 +295,7 @@ public class OrderManagement {
     /**
      * Menampilkan statistik pesanan
      */
-    public void tampilkanStatistik() {
+    public void showStat() {
         if (daftarPesanan.isEmpty()) {
             System.out.println("\n✗ Belum ada pesanan untuk ditampilkan statistiknya.");
             return;
@@ -283,14 +305,14 @@ public class OrderManagement {
         System.out.println("                   STATISTIK PESANAN");
         System.out.println("=".repeat(60));
         System.out.println("Total Pesanan       : " + daftarPesanan.size());
-        System.out.println("Total Pendapatan    : Rp " + formatter.format(hitungTotalPendapatan()));
+        System.out.println("Total Pendapatan    : Rp " + formatter.format(calculateTotalIncome()));
 
-        double rataRata = hitungTotalPendapatan() / daftarPesanan.size();
+        double rataRata = calculateTotalIncome() / daftarPesanan.size();
         System.out.println("Rata-rata per Order : Rp " + formatter.format(rataRata));
         System.out.println("=".repeat(60) + "\n");
     }
 
-    public ArrayList<Order> getDaftarPesanan() {
+    public ArrayList<Order> getOrders() {
         return daftarPesanan;
     }
 
@@ -299,22 +321,24 @@ public class OrderManagement {
      */
     private class OrderSummary extends Order {
 
-        private final int jumlahItem;
+        private final int totalItem;
         private final String namaFile;
         private final String namaDiskon;
+        private int orderNumber;
+        private double totalBayar;
 
-        public OrderSummary(int nomorPesanan, String namaPelanggan, double total,
-                String namaDiskon, int jumlahItem, String namaFile) {
-            super(namaPelanggan, formatter);
-            this.nomorPesanan = nomorPesanan;
+        public OrderSummary(int orderNumber, String customerName, double total,
+                String namaDiskon, int totalItem, String namaFile) {
+            super(customerName, formatter);
+            this.orderNumber = orderNumber;
             this.totalBayar = total;
             this.namaDiskon = namaDiskon;
-            this.jumlahItem = jumlahItem;
+            this.totalItem = totalItem;
             this.namaFile = namaFile;
         }
 
-        public int getJumlahItem() {
-            return jumlahItem;
+        public int gettotalItem() {
+            return totalItem;
         }
 
         public String getNamaFile() {
@@ -326,11 +350,13 @@ public class OrderManagement {
         }
 
         @Override
-        public double hitungTotal() {
-            return totalBayar;
+        public int getOrderNumber() {
+            return orderNumber;
         }
 
-        private int nomorPesanan;
-        private double totalBayar;
+        @Override
+        public double calculateTotal() {
+            return totalBayar;
+        }
     }
 }

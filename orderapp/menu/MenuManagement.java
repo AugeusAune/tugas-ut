@@ -11,8 +11,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- * Kelas MenuManagement untuk mengelola semua menu restoran Menerapkan konsep
- * Encapsulation, Exception Handling, dan File I/O
+ * Kelas MenuManagement untuk mengelola semua menu restoran
  */
 public class MenuManagement {
 
@@ -41,8 +40,8 @@ public class MenuManagement {
         this.add("Air Putih", 3_500, "default", MenuCategory.MINUMAN);
 
         // Tambah diskon default
-        this.addDiskon("Member 10%", 10);
-        this.addDiskon("Promo Spesial", 15);
+        this.addDiscount("Member 10%", 10);
+        this.addDiscount("Promo Spesial", 15);
     }
 
     public void showMenuManagement(Scanner scanner) {
@@ -70,7 +69,7 @@ public class MenuManagement {
                     case 4 ->
                         this.deleteMenuViaInput(scanner);
                     case 5 ->
-                        this.addDiskonViaInput(scanner);
+                        this.addDiscountViaInput(scanner);
                     case 0 ->
                         back = true;
                     default ->
@@ -112,7 +111,7 @@ public class MenuManagement {
         }
     }
 
-    public void addDiskonViaInput(Scanner scanner) {
+    public void addDiscountViaInput(Scanner scanner) {
         try {
             System.out.print("Masukkan nama diskon: ");
             String name = this.getStringInput(scanner);
@@ -124,7 +123,7 @@ public class MenuManagement {
                 throw new IllegalArgumentException("Persentase diskon harus antara 0-100!");
             }
 
-            this.addDiskon(name, persen);
+            this.addDiscount(name, persen);
             System.out.println("✓ Diskon \"" + name + "\" berhasil ditambahkan!");
         } catch (IllegalArgumentException e) {
             System.out.println("✗ " + e.getMessage());
@@ -306,7 +305,7 @@ public class MenuManagement {
     /**
      * Print menu tanpa menampilkan diskon (untuk proses order)
      */
-    public void printMenuTanpaDiskon() {
+    public void printMenuWithoutDiscount() {
         try {
             if (menus.isEmpty()) {
                 System.out.println("\n✗ Menu masih kosong!");
@@ -459,7 +458,7 @@ public class MenuManagement {
         clearStringMenus();
     }
 
-    public MenuItem cariMenu(String nama) throws Exception {
+    public MenuItem searchMenu(String nama) throws Exception {
         if (nama == null || nama.trim().isEmpty()) {
             throw new IllegalArgumentException("Nama menu tidak boleh kosong!");
         }
@@ -472,7 +471,7 @@ public class MenuManagement {
         throw new Exception("Menu '" + nama + "' tidak ditemukan!");
     }
 
-    public Diskon cariDiskon(String nama) throws Exception {
+    public Diskon searchDiscount(String nama) throws Exception {
         if (nama == null || nama.trim().isEmpty()) {
             throw new IllegalArgumentException("Nama diskon tidak boleh kosong!");
         }
@@ -485,7 +484,7 @@ public class MenuManagement {
         throw new Exception("Diskon '" + nama + "' tidak ditemukan!");
     }
 
-    public ArrayList<Diskon> getDaftarDiskon() {
+    public ArrayList<Diskon> getDiscounts() {
         ArrayList<Diskon> daftarDiskon = new ArrayList<>();
         for (MenuItem item : menus) {
             if (item instanceof Diskon) {
@@ -504,7 +503,7 @@ public class MenuManagement {
         this.clearStringMenus();
     }
 
-    private void addDiskon(String name, double persenDiskon) {
+    private void addDiscount(String name, double persenDiskon) {
         this.menus.add(new Diskon(name, persenDiskon));
         this.clearStringMenus();
     }

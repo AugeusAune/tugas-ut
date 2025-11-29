@@ -1,8 +1,7 @@
 package orderapp.menu;
 
 /**
- * Kelas abstrak MenuItem sebagai parent class untuk semua item menu Menerapkan
- * konsep Abstraksi dan Encapsulation
+ * Kelas abstrak MenuItem sebagai parent class untuk semua item menu
  */
 public abstract class MenuItem {
 
