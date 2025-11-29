@@ -1,50 +1,51 @@
 package orderapp.menu;
 
+/**
+ * Kelas abstrak MenuItem sebagai parent class untuk semua item menu Menerapkan
+ * konsep Abstraksi dan Encapsulation
+ */
 public abstract class MenuItem {
 
+    // Atribut dengan access modifier private (Encapsulation)
     private String name;
-
     private double price;
+    private String category;
 
-    private String type;
-
-    public MenuItem(String name, double price, String type) {
+    // Constructor
+    public MenuItem(String name, double price, String category) {
         this.name = name;
         this.price = price;
-        this.type = type;
+        this.category = category;
+    }
+
+    // Getter dan Setter (Encapsulation)
+    public String getName() {
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public String getName() {
-        return this.name;
+    public double getPrice() {
+        return price;
     }
 
     public void setPrice(double price) {
         this.price = price;
     }
 
-    public double getPrice() {
-        return this.price;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getType() {
-        return this.type;
-    }
-
     public String getCategory() {
-        if (this instanceof Makanan) {
-            return "Makanan";
-        }
-        return "Minuman";
+        return category;
     }
 
-    // metode abstrak untuk polymorphism
-    public abstract String printMenu();
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    // Metode abstrak yang harus diimplementasikan oleh subclass (Polymorphism)
+    public abstract void showMenu();
+
+    // Metode untuk format ke string (untuk file I/O)
+    public abstract String toFileString();
 }

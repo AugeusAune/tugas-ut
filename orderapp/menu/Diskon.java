@@ -1,24 +1,43 @@
 package orderapp.menu;
 
+/**
+ * Kelas Diskon sebagai turunan dari MenuItem Menerapkan konsep Inheritance dan
+ * Polymorphism
+ */
 public class Diskon extends MenuItem {
 
-    private double diskonPercent;
+    private double persenDiskon; // Persentase diskon (contoh: 10 untuk 10%)
 
-    public Diskon(String nama, double harga, String type, double diskonPercent) {
-        super(nama, harga, type);
-        this.diskonPercent = diskonPercent;
+    // Constructor
+    public Diskon(String name, double persenDiskon) {
+        super(name, 0, "Diskon");
+        this.persenDiskon = persenDiskon;
     }
 
-    public double getDiskonPercent() {
-        return diskonPercent;
+    // Getter dan Setter
+    public double getPersenDiskon() {
+        return persenDiskon;
     }
 
-    public void setDiskonPercent(double diskonPercent) {
-        this.diskonPercent = diskonPercent;
+    public void setPersenDiskon(double persenDiskon) {
+        this.persenDiskon = persenDiskon;
     }
 
+    // Metode untuk menghitung jumlah diskon
+    public double hitungDiskon(double totalHarga) {
+        return totalHarga * (persenDiskon / 100);
+    }
+
+    // Implementasi metode abstrak dari parent class (Polymorphism)
     @Override
-    public String printMenu() {
-        return String.format("Diskon: %s | Rp%.2f (placeholder price) | Diskon: %.2f%%", this.getName(), this.getPrice(), this.getDiskonPercent());
+    public void showMenu() {
+        System.out.printf("%-28s Diskon: %.0f%%%n",
+                getName(), persenDiskon);
+    }
+
+    // Untuk menyimpan ke file
+    @Override
+    public String toFileString() {
+        return String.format("D;%s;%.2f", getName(), persenDiskon);
     }
 }
