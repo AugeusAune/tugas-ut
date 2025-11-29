@@ -3,7 +3,6 @@ package orderapp.order;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Scanner;
-import orderapp.menu.MenuItem;
 import java.io.*;
 
 /**

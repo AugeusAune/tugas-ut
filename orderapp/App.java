@@ -5,9 +5,6 @@ import orderapp.order.Order;
 import orderapp.order.OrderManagement;
 import java.util.Scanner;
 import java.text.NumberFormat;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.File;
 import java.io.IOException;
 
 /**
